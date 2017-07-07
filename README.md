@@ -1,6 +1,8 @@
 # mithril-datepicker
 Pick a date! But only if you're using Mithril.
 
+Displays a date (defaults to today if none is supplied). Click the display to show/hide the calendar/picker. Making a choice will also do the hiding.
+
 ## Usage
 Include ```picker.js```, then just use it as a component:
 
