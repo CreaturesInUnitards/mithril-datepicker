@@ -1,2 +1,20 @@
 # mithril-datepicker
 Pick a date! But only if you're using Mithril.
+
+## Usage
+Include ```picker.js```, then just use it as a component:
+
+```
+var DatePicker = require('path_to_picker.js')
+var myDate = new Date(someSpecialDateYouHaveInMind)
+
+m(DatePicker, {
+  date: myDate,
+  commit: function(chosenDate){
+    // chosenDate is the date that got chosen. Or 'picked', if you will.
+    // this is where we do what we need to do with it.
+  }
+})
+```
+
+Of course, you can change the appearance easily by editing ```style.sass```. In particular, the width of the widget is held in a variable in the first line: ```$picker-width: 420px```
