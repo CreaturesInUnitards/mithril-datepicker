@@ -137,7 +137,7 @@ module.exports = {
 							})
 						)
 						, m('.weekdays'
-							, { onclick: chooseDate.bind(null, vnode.state) }
+							, { onclick: chooseDate.bind(null, vnode) }
 							, daysFromLastMonth(dateObj).map(function (date) {
 								return m('.day.not-this-month', date)
 							})
