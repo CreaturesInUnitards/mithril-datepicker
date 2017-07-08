@@ -1,3 +1,5 @@
+$picker-width: 210px
+
 * 
 	box-sizing: border-box
 
@@ -9,7 +11,7 @@
 .calendar 
 	background: #333
 	position: absolute
-	width: 210px
+	width: $picker-width
 	user-select: none
 
 .month-header 
@@ -36,7 +38,7 @@
 .day 
 	position: relative
 	padding: 4px
-	width: 30px
+	width: #{$picker-width / 7}
 	text-align: center
 	background: #e9e9e9
 	color: #555555
@@ -66,7 +68,7 @@
 
 .current-date 
 	position: relative
-	width: 210px
+	width: $picker-width
 	background: #eeeeee
 	padding: 10px
 	font-size: 18px
