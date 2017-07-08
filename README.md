@@ -19,4 +19,6 @@ m(DatePicker, {
 })
 ```
 
-Of course, you can change the appearance easily by editing ```style.css```.
+Of course, you can change the appearance easily by editing either ```style.css``` or ```style.sass```, whichever fits your workflow.
+
+_Note: (If you're using SASS, you'll need change line 1 of ```picker.js```.)_
