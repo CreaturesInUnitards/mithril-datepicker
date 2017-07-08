@@ -57,10 +57,10 @@ function daysFromNextMonth(dateObj) {
 	return array
 }
 
-function setMonth(vnode, delta) {
-	var obj = adjustedDateObj(vnode.state.month, vnode.state.year, delta)
-	vnode.state.month = obj.month
-	vnode.state.year = obj.year
+function setMonth(state, delta) {
+	var obj = adjustedDateObj(state.month, state.year, delta)
+	state.month = obj.month
+	state.year = obj.year
 }
 
 function displayDate(date) {
@@ -72,6 +72,28 @@ function classForDateBox(vnode, date) {
 		vnode.state.month !== vnode.state.date.getMonth()) return ''
 	
 	return (vnode.state.date.getDate() === date) ? 'chosen' : ''
+}
+
+function chooseDate(vnode, e) {
+	var box = e.target
+	var date = parseInt(box.textContent)
+	
+	if (box.classList.contains('not-this-month')) {
+
+		if (date > 6) { // 6 === max days to display from prev or next month
+			setMonth(vnode.state, -1)
+		}
+		else if (date < 6) {
+			setMonth(vnode.state, 1)
+		}
+	}
+	vnode.state.date.setYear(vnode.state.year)
+	vnode.state.date.setMonth(vnode.state.month)
+	vnode.state.date.setDate(date)
+
+	vnode.state.active = false
+
+	if (vnode.attrs.commit) vnode.attrs.commit(vnode.state.date)
 }
 
 module.exports = {
@@ -100,12 +122,12 @@ module.exports = {
 					? m('.calendar'
 						, m('.month-header'
 							, m('button'
-								, { onclick: setMonth.bind(null, vnode, -1) }
+								, { onclick: setMonth.bind(null, vnode.state, -1) }
 								, '<'
 							)
 							, m('h2', months[dateObj.month] + ' ' + dateObj.year)
 							, m('button'
-								, { onclick: setMonth.bind(null, vnode, 1) }
+								, { onclick: setMonth.bind(null, vnode.state, 1) }
 								, '>'
 							)
 						)
@@ -115,28 +137,7 @@ module.exports = {
 							})
 						)
 						, m('.weekdays'
-							, {
-								onclick: function (e) {
-									var box = e.target
-									var date = parseInt(box.textContent)
-									if (box.classList.contains('not-this-month')) {
-
-										if (date > 6) { // 6 === max days to display from prev or next month
-											setMonth(vnode, -1)
-										}
-										else if (date < 6) {
-											setMonth(vnode, 1)
-										}
-									}
-									vnode.state.date.setYear(vnode.state.year)
-									vnode.state.date.setMonth(vnode.state.month)
-									vnode.state.date.setDate(date)
-
-									vnode.state.active = false
-									
-									if (vnode.attrs.commit) vnode.attrs.commit(vnode.state.date)
-								}
-							}
+							, { onclick: chooseDate.bind(null, vnode.state) }
 							, daysFromLastMonth(dateObj).map(function (date) {
 								return m('.day.not-this-month', date)
 							})
