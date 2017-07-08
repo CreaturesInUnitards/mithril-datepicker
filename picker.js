@@ -113,7 +113,7 @@ module.exports = {
 			month: vnode.state.month,
 			year: vnode.state.year
 		}
-		return m('.crewmonkey'
+		return m('.container'
 			, m('.date-picker'
 				, m('.current-date'
 					, {
