@@ -7,7 +7,7 @@ Displays a date (defaults to today if none is supplied). Click the display to sh
 Include ```picker.js```, then just use it as a component:
 
 ```
-var DatePicker = require('path_to_picker.js')
+var DatePicker = require('path/to/picker.js')
 var myDate = new Date(someSpecialDateYouHaveInMind)
 
 m(DatePicker, {
