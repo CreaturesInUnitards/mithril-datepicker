@@ -1,4 +1,4 @@
-require('./style.css')
+require('./style.sass')
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -69,7 +69,7 @@ function setMonth(state, delta) {
 }
 
 function displayDate(date) {
-	return days[date.getDay()] + ', ' + months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
+	return days[date.getDay()].substring(0, 3) + ' ' + months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
 }
 
 function classForDateBox(vnode, date) {
@@ -101,7 +101,7 @@ function chooseDate(vnode, e) {
 	if (vnode.attrs.commit) vnode.attrs.commit(vnode.state.date)
 }
 
-module.exports = {
+var DatePicker = {
 	active: false,
 	oninit: function (vnode) {
 		vnode.state.date = vnode.attrs.date || new Date()
@@ -149,7 +149,7 @@ module.exports = {
 							, daysFromThisMonth(dateObj).map(function (date) {
 								return m('.day'
 									, { class: classForDateBox(vnode, date) }
-									, date
+									, m('.number', date)
 								)
 							})
 							, daysFromNextMonth(dateObj).map(function (date) {
@@ -162,3 +162,5 @@ module.exports = {
 		)
 	}
 }
+
+module.exports = DatePicker
