@@ -20,7 +20,7 @@
   padding: 4px;
 }
 
-.month-header	button {
+.month-header button {
   background: none;
   border: 0;
   font-size: 2em;
@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.month-header	h2 { color: white }
+.month-header h2 { color: white }
 
 .weekdays {
   display: flex;
