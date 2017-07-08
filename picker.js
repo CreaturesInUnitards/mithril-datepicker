@@ -73,6 +73,7 @@ function displayDate(date) {
 }
 
 function classForDateBox(vnode, date) {
+	// TODO: if the chosen date is visible but in 'other' month, it should still get the 'chosen' class
 	if (vnode.state.year !== vnode.state.date.getFullYear() || 
 		vnode.state.month !== vnode.state.date.getMonth()) return ''
 	
