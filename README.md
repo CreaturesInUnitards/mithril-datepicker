@@ -19,4 +19,4 @@ m(DatePicker, {
 })
 ```
 
-Of course, you can change the appearance easily by editing ```style.sass```. In particular, the width of the widget (display and calendar) is held in a variable in the first line: ```$picker-width: 420px```
+Of course, you can change the appearance easily by editing ```style.css```.
