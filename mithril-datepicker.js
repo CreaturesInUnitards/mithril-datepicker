@@ -80,6 +80,12 @@ function classForDateBox(vnode, date) {
 	return (vnode.state.date.getDate() === date) ? 'chosen' : ''
 }
 
+function defaultDate(){
+	var now = new Date()
+	now.setHours(0, 0, 0, 0)
+	return now
+}
+
 function chooseDate(vnode, e) {
 	var box = e.target
 	var date = parseInt(box.textContent)
@@ -105,7 +111,7 @@ function chooseDate(vnode, e) {
 var DatePicker = {
 	active: false,
 	oninit: function (vnode) {
-		vnode.state.date = vnode.attrs.date || new Date()
+		vnode.state.date = vnode.attrs.date || defaultDate()
 		vnode.state.month = vnode.state.date.getMonth()
 		vnode.state.year = vnode.state.date.getFullYear()
 	},
