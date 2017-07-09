@@ -11,6 +11,7 @@
   position: relative;
   width: 180px;
   background: #e9e9e9;
+  border: 0;
   color: #555555;
   padding: 10px;
   font-size: 14px;
@@ -23,7 +24,12 @@
   border-radius: 4px;
   overflow: hidden;
   width: 180px;
-  user-select: none; }
+  user-select: none;
+  opacity: 1;
+  transition: opacity 0.2s; }
+
+.incoming {
+  opacity: 0; }
 
 .month-header {
   background: #333333;
@@ -43,29 +49,34 @@
 
 .weekdays {
   display: flex;
-  flex-wrap: wrap;
-  cursor: pointer; }
+  flex-wrap: wrap; }
 
 .day {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-size: 12px;
   width: 25.71429px;
   height: 25.71429px;
   background: #cccccc;
-  color: #555555; }
+  border: 0;
+  color: #555555;
+  cursor: pointer;
+  z-index: 0; }
+  .day:focus {
+    z-index: 1; }
   .day:hover {
     background: #b3b3b3; }
   .day.dummy {
     background: #333333;
     color: white;
     border: 0;
-    cursor: default; }
+    cursor: default;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
     .day.dummy:hover {
       background: #333333; }
   .day .number {
+    position: relative;
     z-index: 1; }
   .day.chosen:before {
     content: "";
@@ -73,8 +84,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     border-radius: 50%;
     border: 1px solid #222222;
     background: white;

@@ -29,6 +29,7 @@ $other-months-foreground: #999999
 	position: relative
 	width: $picker-width
 	background: $current-date-background
+	border: 0
 	color: $current-date-foreground
 	padding: 10px
 	font-size: $current-date-font-size
@@ -42,6 +43,11 @@ $other-months-foreground: #999999
 	overflow: hidden
 	width: $picker-width
 	user-select: none
+	opacity: 1
+	transition: opacity 0.2s
+	
+.incoming
+	opacity: 0
 
 .month-header
 	background: $calendar-head-background
@@ -64,18 +70,20 @@ $other-months-foreground: #999999
 .weekdays 
 	display: flex
 	flex-wrap: wrap
-	cursor: pointer
 
 .day 
 	position: relative
-	display: flex
-	justify-content: center
-	align-items: center
 	font-size: $calendar-body-font-size
 	width: #{$picker-width / 7}
 	height: #{$picker-width / 7}
 	background: $calendar-body-background
+	border: 0
 	color: $calendar-body-foreground
+	cursor: pointer
+	z-index: 0
+	
+	&:focus
+		z-index: 1
 	
 	&:hover
 		background: darken($calendar-body-background, 10)
@@ -85,11 +93,15 @@ $other-months-foreground: #999999
 		color: $calendar-head-foreground
 		border: 0
 		cursor: default
+		display: flex
+		justify-content: center
+		align-items: center
 		
 		&:hover
 			background: $calendar-head-background
 		
 	.number
+		position: relative
 		z-index: 1
 
 	&.chosen:before 
@@ -98,8 +110,8 @@ $other-months-foreground: #999999
 		top: 50%
 		left: 50%
 		transform: translate(-50%, -50%)
-		width: 70%
-		height: 70%
+		width: 80%
+		height: 80%
 		border-radius: 50%
 		border: 1px solid $chosen-day-stroke
 		background: $chosen-day-fill

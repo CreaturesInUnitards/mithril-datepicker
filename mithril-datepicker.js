@@ -1,4 +1,6 @@
-require('./style.sass')
+if (typeof window.require === 'function') {
+	require('./style.sass')
+}
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -31,8 +33,7 @@ function lastDateInMonth(month, year, delta) {
 
 function daysFromLastMonth(dateObj){
 	var month = dateObj.month, year = dateObj.year
-	var newDate = new Date(year, month, 1)
-	var day = newDate.getDay()
+	var day = (new Date(year, month, 1)).getDay()
 	var array = []
 	if (day > 0) {
 		var len = lastDateInMonth(month, year, -1)
@@ -53,8 +54,7 @@ function daysFromThisMonth(dateObj) {
 function daysFromNextMonth(dateObj) {
 	var month = dateObj.month, year = dateObj.year
 	var lastDate = lastDateInMonth(month, year, 0)
-	var newDate = new Date(year, month, lastDate)
-	var day = newDate.getDay()
+	var day = (new Date(year, month, lastDate)).getDay()
 	var array = []
 	if (day < 6) {
 		for (var i=1; i<=6-day; i++) { array.push(i) }
@@ -89,7 +89,7 @@ function chooseDate(vnode, e) {
 		if (date > 6) { // 6 === max days to display from prev or next month
 			setMonth(vnode.state, -1)
 		}
-		else if (date < 6) {
+		else if (date <= 6) {
 			setMonth(vnode.state, 1)
 		}
 	}
@@ -116,7 +116,7 @@ var DatePicker = {
 		}
 		return m('.container'
 			, m('.date-picker'
-				, m('.current-date'
+				, m('button.current-date'
 					, {
 						onclick: function () {
 							vnode.state.active = !vnode.state.active
@@ -125,7 +125,18 @@ var DatePicker = {
 					, displayDate(vnode.state.date)
 				)
 				, vnode.state.active
-					? m('.calendar'
+					? m('.calendar.incoming'
+						, {
+							oncreate: function (vnode) {
+								requestAnimationFrame(function () { vnode.dom.classList.remove('incoming') })
+							},
+							onbeforeremove: function (vnode) {
+								vnode.dom.classList.add('incoming')
+								return new Promise(function (done) {
+									setTimeout(done, 200)
+								})
+							}
+						}
 						, m('.month-header'
 							, m('button'
 								, { onclick: setMonth.bind(null, vnode.state, -1) }
@@ -145,16 +156,16 @@ var DatePicker = {
 						, m('.weekdays'
 							, { onclick: chooseDate.bind(null, vnode) }
 							, daysFromLastMonth(dateObj).map(function (date) {
-								return m('.day.not-this-month', date)
+								return m('button.day.not-this-month', date)
 							})
 							, daysFromThisMonth(dateObj).map(function (date) {
-								return m('.day'
+								return m('button.day'
 									, { class: classForDateBox(vnode, date) }
 									, m('.number', date)
 								)
 							})
 							, daysFromNextMonth(dateObj).map(function (date) {
-								return m('.day.not-this-month', date)
+								return m('button.day.not-this-month', date)
 							})
 						)
 					)
@@ -164,4 +175,5 @@ var DatePicker = {
 	}
 }
 
-module.exports = DatePicker
+if (typeof window.module === 'object') module.exports = DatePicker
+else window.DatePicker = DatePicker
