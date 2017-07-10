@@ -1,13 +1,12 @@
-if (typeof window.require === 'function') {
-	require('./style.sass')
-}
+if (typeof window.require === 'function') require('./style.sass')
 
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 var longMonths = [0, 2, 4, 6, 7, 9, 11]
 
-function adjustedDateObj(month, year, delta) {
+function adjustedDateObj(dateObj, delta) {
+	var month = dateObj.month, year = dateObj.year
 	month += delta
 
 	var over = month > 11
@@ -19,8 +18,9 @@ function adjustedDateObj(month, year, delta) {
 	}
 }
 
-function lastDateInMonth(month, year, delta) {
-	var obj = adjustedDateObj(month, year, delta)
+function lastDateInMonth(dateObj, delta) {
+	var obj = adjustedDateObj(dateObj, delta)
+	console.log(obj)
 	if (longMonths.indexOf(obj.month) > -1) return 31
 	if (obj.month === 1) {
 		if (!(obj.year % 400)) return 29
@@ -36,14 +36,14 @@ function daysFromLastMonth(dateObj){
 	var day = (new Date(year, month, 1)).getDay()
 	var array = []
 	if (day > 0) {
-		var len = lastDateInMonth(month, year, -1)
+		var len = lastDateInMonth(dateObj, -1)
 		for (var i=len-day+1; i<=len; i++) { array.push(i) }
 	}
 	return array
 }
 
 function daysFromThisMonth(dateObj) {
-	var max = lastDateInMonth(dateObj.month, dateObj.year, 0)
+	var max = lastDateInMonth(dateObj, 0)
 	var array = []
 	for (var i=1; i<=max; i++) {
 		array.push(i)
@@ -53,7 +53,7 @@ function daysFromThisMonth(dateObj) {
 
 function daysFromNextMonth(dateObj) {
 	var month = dateObj.month, year = dateObj.year
-	var lastDate = lastDateInMonth(month, year, 0)
+	var lastDate = lastDateInMonth(dateObj, 0)
 	var day = (new Date(year, month, lastDate)).getDay()
 	var array = []
 	if (day < 6) {
@@ -63,9 +63,7 @@ function daysFromNextMonth(dateObj) {
 }
 
 function setMonth(state, delta) {
-	var obj = adjustedDateObj(state.month, state.year, delta)
-	state.month = obj.month
-	state.year = obj.year
+	state.dateObj = adjustedDateObj(state.dateObj, delta) 
 }
 
 function displayDate(date) {
@@ -74,8 +72,9 @@ function displayDate(date) {
 
 function classForDateBox(vnode, date) {
 	// TODO: if the chosen date is visible but in 'other' month, it should still get the 'chosen' class
-	if (vnode.state.year !== vnode.state.date.getFullYear() || 
-		vnode.state.month !== vnode.state.date.getMonth()) return ''
+	var dateObj = vnode.state.dateObj
+	if (dateObj.year !== vnode.state.date.getFullYear() || 
+		dateObj.month !== vnode.state.date.getMonth()) return ''
 	
 	return (vnode.state.date.getDate() === date) ? 'chosen' : ''
 }
@@ -99,8 +98,8 @@ function chooseDate(vnode, e) {
 			setMonth(vnode.state, 1)
 		}
 	}
-	vnode.state.date.setYear(vnode.state.year)
-	vnode.state.date.setMonth(vnode.state.month)
+	vnode.state.date.setYear(vnode.state.dateObj.year)
+	vnode.state.date.setMonth(vnode.state.dateObj.month)
 	vnode.state.date.setDate(date)
 
 	vnode.state.active = false
@@ -112,25 +111,32 @@ var DatePicker = {
 	active: false,
 	oninit: function (vnode) {
 		vnode.state.date = vnode.attrs.date || defaultDate()
-		vnode.state.month = vnode.state.date.getMonth()
-		vnode.state.year = vnode.state.date.getFullYear()
+		vnode.state.dateObj = {
+			month: vnode.state.date.getMonth(),
+			year: vnode.state.date.getFullYear()
+		}
 	},
 	view: function (vnode) {
-		var dateObj = {
-			month: vnode.state.month,
-			year: vnode.state.year
-		}
+		var dateObj = vnode.state.dateObj
 		return m('.container'
-			, m('.date-picker'
+			, m('.mithril-date-picker'
+				
+				// chosen/default date display
 				, m('button.current-date'
 					, {
 						onclick: function () {
 							vnode.state.active = !vnode.state.active
+							vnode.state.dateObj = {
+								month: vnode.state.date.getMonth(),
+								year: vnode.state.date.getFullYear()
+							}
 						}
 					}
 					, displayDate(vnode.state.date)
 				)
 				, vnode.state.active
+					
+					// calendar/picker
 					? m('.calendar.incoming'
 						, {
 							oncreate: function (vnode) {
@@ -143,22 +149,26 @@ var DatePicker = {
 								})
 							}
 						}
+						
+						// header
 						, m('.month-header'
-							, m('button'
+							, m('button.prev'
 								, { onclick: setMonth.bind(null, vnode.state, -1) }
-								, '<'
 							)
-							, m('h2', months[dateObj.month] + ' ' + dateObj.year)
-							, m('button'
+							, m('button.month-year', months[dateObj.month] + ' ' + dateObj.year)
+							, m('button.next'
 								, { onclick: setMonth.bind(null, vnode.state, 1) }
-								, '>'
 							)
 						)
+						
+						// weekday column labels
 						, m('.weekdays'
 							, days.map(function (day) {
 								return m('.day.dummy', day.substring(0, 1))
 							})
 						)
+						
+						// clickable day blocks
 						, m('.weekdays'
 							, { onclick: chooseDate.bind(null, vnode) }
 							, daysFromLastMonth(dateObj).map(function (date) {

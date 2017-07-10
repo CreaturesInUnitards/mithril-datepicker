@@ -7,6 +7,8 @@ $current-date-font-size: 14px
 $calendar-head-background: #333333
 $calendar-head-foreground: white
 
+$prev-next-edge-margin: 7px
+
 $calendar-body-background: #cccccc
 $calendar-body-foreground: #555555
 $calendar-body-font-size: 12px
@@ -16,106 +18,127 @@ $chosen-day-fill: white
 
 $other-months-foreground: #999999
 
-.date-picker, .date-picker *
+.mithril-date-picker, .mithril-date-picker *
 	box-sizing: border-box
+	-webkit-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	user-select: none
 
-.date-picker 
-	font-family: Optima, Helvetica, Verdana, Arial, sans-serif
+.mithril-date-picker 
 	position: relative
 	border-radius: 4px
 	z-index: 99999
-
-.current-date
-	position: relative
-	width: $picker-width
-	background: $current-date-background
-	border: 0
-	color: $current-date-foreground
-	padding: 10px
-	font-size: $current-date-font-size
-	text-align: center
-	cursor: pointer
-
-.calendar 
-	position: absolute
-	top: calc(100% + 4px)
-	border-radius: 4px
-	overflow: hidden
-	width: $picker-width
-	user-select: none
-	opacity: 1
-	transition: opacity 0.2s
 	
-.incoming
-	opacity: 0
+	*, input, button, textarea
+		font-family: Optima, Helvetica, Verdana, Arial, sans-serif
 
-.month-header
-	background: $calendar-head-background
-	display: flex
-	justify-content: space-between
-	align-items: center
-	padding: 4px
-
-	button 
-		background: none
+	.current-date
+		position: relative
+		width: $picker-width
+		background: $current-date-background
 		border: 0
-		font-size: 1.25em
-		color: $calendar-head-foreground
+		color: $current-date-foreground
+		padding: 10px
+		font-size: $current-date-font-size
+		text-align: center
 		cursor: pointer
-
-	h2
-		color: $calendar-head-foreground
-		font-size: 1em
+	
+	.calendar 
+		position: absolute
+		top: calc(100% + 4px)
+		border-radius: 4px
+		overflow: hidden
+		width: $picker-width
+		opacity: 1
+		transition: opacity 0.2s
 		
-.weekdays 
-	display: flex
-	flex-wrap: wrap
-
-.day 
-	position: relative
-	font-size: $calendar-body-font-size
-	width: #{$picker-width / 7}
-	height: #{$picker-width / 7}
-	background: $calendar-body-background
-	border: 0
-	color: $calendar-body-foreground
-	cursor: pointer
-	z-index: 0
+	.incoming
+		opacity: 0
 	
-	&:focus
-		z-index: 1
-	
-	&:hover
-		background: darken($calendar-body-background, 10)
-
-	&.dummy
+	.month-header
 		background: $calendar-head-background
-		color: $calendar-head-foreground
-		border: 0
-		cursor: default
 		display: flex
-		justify-content: center
+		justify-content: space-between
 		align-items: center
+		padding: 4px
+		
+		button
+			padding: 0
+			margin: 0
+			background: none
+			border: 0
+			cursor: pointer
+	
+		button.prev, button.next
+			width: 12px
+			height: 12px
+			border-top: 2px solid $calendar-head-foreground
+			border-right: 2px solid $calendar-head-foreground
+			
+		button.prev
+			margin-left: $prev-next-edge-margin
+			transform: rotate(-135deg)
+			
+		button.next
+			margin-right: $prev-next-edge-margin
+			transform: rotate(45deg)
+	
+		button.month-year
+			color: $calendar-head-foreground
+			font-size: 1em
+			font-weight: 700
+			padding: 7px 0
+			
+	.weekdays 
+		display: flex
+		flex-wrap: wrap
+	
+	.day 
+		position: relative
+		font-size: $calendar-body-font-size
+		width: #{$picker-width / 7}
+		height: #{$picker-width / 7}
+		background: $calendar-body-background
+		border: 0
+		color: $calendar-body-foreground
+		cursor: pointer
+		z-index: 0
+		
+		&:focus
+			z-index: 1
 		
 		&:hover
+			background: darken($calendar-body-background, 10)
+	
+		&.dummy
 			background: $calendar-head-background
-		
-	.number
-		position: relative
-		z-index: 1
-
-	&.chosen:before 
-		content: ''
-		position: absolute
-		top: 50%
-		left: 50%
-		transform: translate(-50%, -50%)
-		width: 80%
-		height: 80%
-		border-radius: 50%
-		border: 1px solid $chosen-day-stroke
-		background: $chosen-day-fill
-		z-index: 0
-
-.not-this-month
-	color: $other-months-foreground 
+			color: $calendar-head-foreground
+			border: 0
+			cursor: default
+			display: flex
+			justify-content: center
+			align-items: center
+			
+			&:hover
+				background: $calendar-head-background
+			
+		.number
+			position: relative
+			z-index: 1
+	
+		&.chosen:before 
+			content: ''
+			position: absolute
+			top: 50%
+			left: 50%
+			transform: translate(-50%, -50%)
+			width: 80%
+			height: 80%
+			border-radius: 50%
+			border: 1px solid $chosen-day-stroke
+			background: $chosen-day-fill
+			z-index: 0
+	
+	.not-this-month
+		color: $other-months-foreground 
