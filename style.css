@@ -10,7 +10,7 @@
   border-radius: 4px;
   z-index: 99999; }
   .mithril-date-picker *, .mithril-date-picker input, .mithril-date-picker button, .mithril-date-picker textarea {
-    font-family: Optima, Helvetica, Verdana, Arial, sans-serif; }
+    font-family: Optima, Helvetica, Arial, sans-serif; }
   .mithril-date-picker .current-date {
     position: relative;
     width: 180px;
@@ -31,52 +31,50 @@
     transition: opacity 0.2s; }
   .mithril-date-picker .incoming {
     opacity: 0; }
-  .mithril-date-picker .month-header {
+  .mithril-date-picker header {
     background: #333333;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 4px; }
-    .mithril-date-picker .month-header button {
+    .mithril-date-picker header button {
       padding: 0;
       margin: 0;
       background: none;
       border: 0;
       cursor: pointer; }
-    .mithril-date-picker .month-header button.prev, .mithril-date-picker .month-header button.next {
+    .mithril-date-picker header button.prev, .mithril-date-picker header button.next {
       width: 12px;
       height: 12px;
       border-top: 2px solid white;
       border-right: 2px solid white; }
-    .mithril-date-picker .month-header button.prev {
+    .mithril-date-picker header button.prev {
       margin-left: 7px;
       transform: rotate(-135deg); }
-    .mithril-date-picker .month-header button.next {
+    .mithril-date-picker header button.next {
       margin-right: 7px;
       transform: rotate(45deg); }
-    .mithril-date-picker .month-header button.month-year {
+    .mithril-date-picker header button.month-year {
       color: white;
       font-size: 1em;
       font-weight: 700;
       padding: 7px 0; }
-  .mithril-date-picker .weekdays {
+  .mithril-date-picker .weekdays, .mithril-date-picker .months {
     display: flex;
     flex-wrap: wrap; }
-  .mithril-date-picker .day {
+  .mithril-date-picker .day, .mithril-date-picker .month {
     position: relative;
     font-size: 12px;
-    width: 25.71429px;
-    height: 25.71429px;
     background: #cccccc;
     border: 0;
     color: #555555;
     cursor: pointer;
     z-index: 0; }
-    .mithril-date-picker .day:focus {
+    .mithril-date-picker .day:focus, .mithril-date-picker .month:focus {
       z-index: 1; }
-    .mithril-date-picker .day:hover {
+    .mithril-date-picker .day:hover, .mithril-date-picker .month:hover {
       background: #b3b3b3; }
-    .mithril-date-picker .day.dummy {
+    .mithril-date-picker .day.dummy, .mithril-date-picker .month.dummy {
       background: #333333;
       color: white;
       border: 0;
@@ -84,12 +82,12 @@
       display: flex;
       justify-content: center;
       align-items: center; }
-      .mithril-date-picker .day.dummy:hover {
+      .mithril-date-picker .day.dummy:hover, .mithril-date-picker .month.dummy:hover {
         background: #333333; }
-    .mithril-date-picker .day .number {
+    .mithril-date-picker .day .number, .mithril-date-picker .month .number {
       position: relative;
       z-index: 1; }
-    .mithril-date-picker .day.chosen:before {
+    .mithril-date-picker .day.chosen:before, .mithril-date-picker .month.chosen:before {
       content: "";
       position: absolute;
       top: 50%;
@@ -101,6 +99,12 @@
       border: 1px solid #222222;
       background: white;
       z-index: 0; }
+  .mithril-date-picker .day {
+    width: 25.71429px;
+    height: 25.71429px; }
+  .mithril-date-picker .month {
+    width: 45px;
+    height: 45px; }
   .mithril-date-picker .not-this-month {
     color: #999999; }
 
