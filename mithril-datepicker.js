@@ -15,7 +15,7 @@
 			var date = parseInt(box.textContent)
 
 			if (box.classList.contains('not-this-month')) {
-				State.stepMonth(otherMonthIsPrev(date) ? -1 : 1)
+				State.stepMonth(adjascentMonthIsPrev(date) ? -1 : 1)
 			}
 
 			State.date.setFullYear(State.viewObj.year, State.viewObj.month, date)
@@ -23,6 +23,23 @@
 			if (vnode.attrs.commit) vnode.attrs.commit(State.date)
 
 			State.active = false
+		},
+		classForDateBox: function (date) {
+			var viewObj = State.viewObj
+			if (viewObj.year !== State.date.getFullYear() || viewObj.month !== State.date.getMonth()) {
+				// TODO: if the chosen date is visible but in 'other' month, it should still get the 'chosen' class
+				return ''	
+			} 
+
+			return (State.date.getDate() === date) ? 'chosen' : ''
+		},
+		classForMonthBox: function (month) {
+			return (State.date.getMonth() === month && State.date.getFullYear() === State.viewObj.year) ? 'chosen' : ''
+		},
+		defaultDate: function() {
+			var now = new Date()
+			now.setHours(0, 0, 0, 0)
+			return now
 		},
 		jumpToMonth: function (month) {
 			State.viewObj.month = month
@@ -110,33 +127,13 @@
 		return days[date.getDay()].substring(0, 3) + ' ' + months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
 	}
 
-	function classForDateBox(date) {
-		// TODO: if the chosen date is visible but in 'other' month, it should still get the 'chosen' class
-		var viewObj = State.viewObj
-		if (viewObj.year !== State.date.getFullYear() ||
-			viewObj.month !== State.date.getMonth()) return ''
-		
-		return (State.date.getDate() === date) ? 'chosen' : ''
-	}
-
-	function classForMonthBox(month) {
-		return (State.date.getMonth() === month && State.date.getFullYear() === State.viewObj.year) ? 'chosen' : ''
-	}
-
-	function defaultDate(){
-		var now = new Date()
-		now.setHours(0, 0, 0, 0)
-		return now
-	}
-
-	function otherMonthIsPrev(n) {
+	function adjascentMonthIsPrev(n) {
 		return n > 6 // 6 === max days to display from prev or next month
 	}
 
 	var DatePicker = {
-		active: false,
 		oninit: function (vnode) {
-			State.date = vnode.attrs.date || defaultDate()
+			State.date = vnode.attrs.date || State.defaultDate()
 			State.viewObj = {
 				month: State.date.getMonth(),
 				year: State.date.getFullYear()
@@ -144,29 +141,25 @@
 		},
 		view: function () {
 			var viewObj = State.viewObj
-			return m('.container'
-				, m('.mithril-date-picker'
-
-					// chosen/default date display
-					, m('button.current-date'
-						, {
-							onclick: function () {
-								State.active = !State.active
-								State.yearView = false
-								State.viewObj = {
-									month: State.date.getMonth(),
-									year: State.date.getFullYear()
-								}
+			return m('.mithril-date-picker'
+				, m('button.current-date'
+					, {
+						onclick: function () {
+							State.active = !State.active
+							State.yearView = false
+							State.viewObj = {
+								month: State.date.getMonth(),
+								year: State.date.getFullYear()
 							}
 						}
-						, displayDate(State.date)
-					)
-					, State.active
-						? State.yearView
-							? m(YearView, { viewObj: viewObj }) 
-							: m(MonthView, { viewObj: viewObj })
-						: null
+					}
+					, displayDate(State.date)
 				)
+				, State.active
+					? State.yearView
+						? m(YearView, { viewObj: viewObj }) 
+						: m(MonthView, { viewObj: viewObj })
+					: null
 			)
 		}
 	}
@@ -196,7 +189,7 @@
 				, months.map(function (month, idx) {
 					return m('button.month'
 						, {
-							class: classForMonthBox(idx),
+							class: State.classForMonthBox(idx),
 							onclick: State.jumpToMonth.bind(null, idx)
 						}
 						, m('.number', month.substring(0, 3))
@@ -223,7 +216,7 @@
 				})
 				, daysFromThisMonth(viewObj).map(function (date) {
 					return m('button.day'
-						, { class: classForDateBox(date) }
+						, { class: State.classForDateBox(date) }
 						, m('.number', date)
 					)
 				})

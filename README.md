@@ -1,10 +1,15 @@
 # mithril-datepicker
 Pick a date! But only if you're using Mithril.
 
-Displays a date (defaults to today if none is supplied). Click the display to show/hide the calendar/picker. Making a choice will also do the hiding.
+Displays a date (defaults to today if none is supplied). 
+Click the display to show/hide the calendar in month/date view.
+Making a choice will hide the calendar.
+
+With the calendar visible, click the month/year heading to toggle year/month view.
+Making a choice will return to month/date view.
 
 ## Demo
-[mithril-datepicker at flems.io](http://tinyurl.com/y8aozy5t)
+[mithril-datepicker at flems.io](http://tinyurl.com/y6v5wrl5)
 
 ## Usage
 Works with Node.js modules, or as a standalone ES5 script. Either ```require``` it, or simply include a ```script``` tag sometime after including ```mithril```. then just use it as a component:
