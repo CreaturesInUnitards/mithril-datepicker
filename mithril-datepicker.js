@@ -20,7 +20,6 @@ function adjustedDateObj(dateObj, delta) {
 
 function lastDateInMonth(dateObj, delta) {
 	var obj = adjustedDateObj(dateObj, delta)
-	console.log(obj)
 	if (longMonths.indexOf(obj.month) > -1) return 31
 	if (obj.month === 1) {
 		if (!(obj.year % 400)) return 29
