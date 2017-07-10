@@ -142,7 +142,7 @@
 				year: State.date.getFullYear()
 			}
 		},
-		view: function (vnode) {
+		view: function () {
 			var viewObj = State.viewObj
 			return m('.container'
 				, m('.mithril-date-picker'
@@ -223,7 +223,7 @@
 				})
 				, daysFromThisMonth(viewObj).map(function (date) {
 					return m('button.day'
-						, { class: classForDateBox(vnode, date) }
+						, { class: classForDateBox(date) }
 						, m('.number', date)
 					)
 				})
@@ -237,4 +237,3 @@
 	if (typeof window.module === 'object') module.exports = DatePicker
 	else window.DatePicker = DatePicker	
 })(window)
-
