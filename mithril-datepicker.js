@@ -1,5 +1,5 @@
-;(function (window) {
-	if (typeof window.require === 'function') require('./style.sass')
+;(function () {
+	if (typeof require === 'function') require('./style.sass')
 
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -139,7 +139,7 @@
 				year: State.date.getFullYear()
 			}
 		},
-		view: function () {
+		view: function (vnode) {
 			var viewObj = State.viewObj
 			return m('.mithril-date-picker'
 				, m('button.current-date'
@@ -158,7 +158,7 @@
 				, State.active
 					? State.yearView
 						? m(YearView, { viewObj: viewObj }) 
-						: m(MonthView, { viewObj: viewObj })
+						: m(MonthView, { viewObj: viewObj, commit: vnode.attrs.commit })
 					: null
 			)
 		}
@@ -227,6 +227,6 @@
 		)
 	}
 
-	if (typeof window.module === 'object') module.exports = DatePicker
+	if (typeof module === 'object') module.exports = DatePicker
 	else window.DatePicker = DatePicker	
-})(window)
+})()
