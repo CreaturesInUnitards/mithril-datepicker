@@ -13,7 +13,7 @@
     font-family: Optima, Helvetica, Arial, sans-serif; }
   .mithril-date-picker .current-date {
     position: relative;
-    width: 180px;
+    width: 182px;
     background: #e9e9e9;
     border: 0;
     color: #555555;
@@ -26,7 +26,7 @@
     top: calc(100% + 4px);
     border-radius: 4px;
     overflow: hidden;
-    width: 180px;
+    width: 182px;
     opacity: 1;
     transition: opacity 0.2s; }
   .mithril-date-picker .incoming {
@@ -100,11 +100,11 @@
       background: white;
       z-index: 0; }
   .mithril-date-picker .day {
-    width: 25.71429px;
-    height: 25.71429px; }
+    width: 26px;
+    height: 26px; }
   .mithril-date-picker .month {
-    width: 45px;
-    height: 45px; }
+    width: 45.5px;
+    height: 45.5px; }
   .mithril-date-picker .not-this-month {
     color: #999999; }
 
