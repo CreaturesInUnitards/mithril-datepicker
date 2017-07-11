@@ -9,7 +9,7 @@ With the calendar visible, click the month/year heading to toggle year/month vie
 Making a choice will return to month/date view.
 
 ## Demo
-[mithril-datepicker at flems.io](http://tinyurl.com/y7cje3tb)
+[mithril-datepicker at flems.io](http://tinyurl.com/y6uovtcr)
 
 
 ## Usage
