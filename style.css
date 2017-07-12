@@ -1,3 +1,10 @@
+.mithril-date-picker-container {
+  position: relative;
+  display: inline-block;
+  z-index: 0; }
+  .mithril-date-picker-container.active {
+    z-index: 99999; }
+
 .mithril-date-picker, .mithril-date-picker * {
   box-sizing: border-box;
   -webkit-user-select: none;
@@ -6,9 +13,8 @@
   user-select: none; }
 
 .mithril-date-picker {
-  position: relative;
   border-radius: 4px;
-  z-index: 99999; }
+  margin: 0 4px; }
   .mithril-date-picker *, .mithril-date-picker input, .mithril-date-picker button, .mithril-date-picker textarea {
     font-family: Optima, Helvetica, Arial, sans-serif; }
   .mithril-date-picker .current-date {
@@ -20,7 +26,15 @@
     padding: 10px;
     font-size: 14px;
     text-align: center;
-    cursor: pointer; }
+    cursor: pointer;
+    z-index: 0; }
+  .mithril-date-picker .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.5); }
   .mithril-date-picker .calendar {
     position: absolute;
     top: calc(100% + 4px);
@@ -38,22 +52,35 @@
     align-items: center;
     padding: 4px; }
     .mithril-date-picker header button {
+      position: relative;
       padding: 0;
       margin: 0;
       background: none;
       border: 0;
       cursor: pointer; }
-    .mithril-date-picker header button.prev, .mithril-date-picker header button.next {
+    .mithril-date-picker header button.prev, .mithril-date-picker header button.next, .mithril-date-picker header button.prev10, .mithril-date-picker header button.next10, .mithril-date-picker header button.prev10:after, .mithril-date-picker header button.next10:after {
       width: 12px;
       height: 12px;
       border-top: 2px solid white;
       border-right: 2px solid white; }
-    .mithril-date-picker header button.prev {
+    .mithril-date-picker header button.prev, .mithril-date-picker header button.prev10 {
       margin-left: 7px;
+      margin-right: auto;
       transform: rotate(-135deg); }
-    .mithril-date-picker header button.next {
+    .mithril-date-picker header button.next, .mithril-date-picker header button.next10 {
       margin-right: 7px;
+      margin-left: auto;
       transform: rotate(45deg); }
+    .mithril-date-picker header button.prev10:after, .mithril-date-picker header button.next10:after {
+      content: "";
+      position: absolute;
+      top: 0; }
+    .mithril-date-picker header button.prev10:after {
+      top: 3px;
+      right: 3px; }
+    .mithril-date-picker header button.next10:after {
+      top: 3px;
+      right: 3px; }
     .mithril-date-picker header button.month-year {
       color: white;
       font-size: 1em;

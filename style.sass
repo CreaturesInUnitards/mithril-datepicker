@@ -18,6 +18,14 @@ $chosen-day-fill: white
 
 $other-months-foreground: #999999
 
+.mithril-date-picker-container
+	position: relative
+	display: inline-block
+	z-index: 0
+	
+	&.active
+		z-index: 99999
+
 .mithril-date-picker, .mithril-date-picker *
 	box-sizing: border-box
 	-webkit-user-select: none
@@ -26,9 +34,8 @@ $other-months-foreground: #999999
 	user-select: none
 
 .mithril-date-picker 
-	position: relative
 	border-radius: 4px
-	z-index: 99999
+	margin: 0 4px
 	
 	*, input, button, textarea
 		font-family: Optima, Helvetica, Arial, sans-serif
@@ -43,6 +50,15 @@ $other-months-foreground: #999999
 		font-size: $current-date-font-size
 		text-align: center
 		cursor: pointer
+		z-index: 0
+		
+	.overlay
+		position: fixed
+		top: 0
+		left: 0
+		width: 100vw
+		height: 100vh
+		background: rgba(255, 255, 255, 0.5)
 	
 	.calendar 
 		position: absolute
@@ -52,7 +68,7 @@ $other-months-foreground: #999999
 		width: $picker-width
 		opacity: 1
 		transition: opacity 0.2s
-		
+
 	.incoming
 		opacity: 0
 	
@@ -64,31 +80,48 @@ $other-months-foreground: #999999
 		padding: 4px
 		
 		button
+			position: relative
 			padding: 0
 			margin: 0
 			background: none
 			border: 0
 			cursor: pointer
 	
-		button.prev, button.next
+		button.prev, button.next, button.prev10, button.next10, button.prev10:after, button.next10:after
 			width: 12px
 			height: 12px
 			border-top: 2px solid $calendar-head-foreground
 			border-right: 2px solid $calendar-head-foreground
 			
-		button.prev
+		button.prev, button.prev10
 			margin-left: $prev-next-edge-margin
+			margin-right: auto
 			transform: rotate(-135deg)
 			
-		button.next
+		button.next, button.next10
 			margin-right: $prev-next-edge-margin
+			margin-left: auto
 			transform: rotate(45deg)
-	
+			
+		button.prev10:after, button.next10:after
+			content: ''
+			position: absolute
+			top: 0
+
+		button.prev10:after
+			top: 3px
+			right: 3px
+
+		button.next10:after
+			top: 3px
+			right: 3px
+
 		button.month-year
 			color: $calendar-head-foreground
 			font-size: 1em
 			font-weight: 700
 			padding: 7px 0
+			
 			
 	.weekdays, .months
 		display: flex
