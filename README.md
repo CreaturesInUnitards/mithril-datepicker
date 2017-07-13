@@ -9,7 +9,7 @@ With the calendar visible, click the month/year heading to toggle year/month vie
 Making a choice will return to month/date view.
 
 ## Demo
-[mithril-datepicker at flems.io](http://tinyurl.com/y6uovtcr)
+[mithril-datepicker at flems.io](http://tinyurl.com/yc2993p3)
 
 
 ## Usage
@@ -34,12 +34,6 @@ There are 2 optional attributes you can pass in via the component's ```attrs``` 
 2. ```commit```:    function to execute when a date is chosen. Receives the newly-chosen ```Date``` object as its argument.
 
 ## Theming
-
-If you're not using Node.js modules, put the following line in the ```head``` of your document:
- 
-```
-<link rel="stylesheet" href="path/to/style.css" />
-```
 
 You can change the appearance easily by editing either ```style.css``` or ```style.sass```,
 whichever fits your workflow. If you're using SASS, you have a lot of quick-change UI based on variables at the top of the document.
