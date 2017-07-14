@@ -1,4 +1,4 @@
-$picker-width: 182px
+$picker-width: 180px
 
 $current-date-foreground: #555555
 $current-date-background: #e9e9e9
@@ -34,7 +34,6 @@ $other-months-foreground: #999999
 	user-select: none
 
 .mithril-date-picker 
-	border-radius: 4px
 	margin: 0 4px
 	
 	*, input, button, textarea
@@ -58,7 +57,7 @@ $other-months-foreground: #999999
 		left: 0
 		width: 100vw
 		height: 100vh
-		background: rgba(255, 255, 255, 0.5)
+		background: rgba(255, 255, 255, 0.8)
 	
 	.calendar 
 		position: absolute
@@ -120,7 +119,19 @@ $other-months-foreground: #999999
 			color: $calendar-head-foreground
 			font-size: 1em
 			font-weight: 700
-			padding: 7px 0
+			padding: 7px 15px 7px 0
+			
+			&:after
+				content: ""
+				display: block
+				position: absolute
+				top: 15px
+				right: 0
+				width: 0
+				height: 0
+				border-style: solid
+				border-width: 5px 5px 0 5px
+				border-color: #ffffff transparent transparent transparent
 			
 			
 	.weekdays, .months
@@ -172,12 +183,12 @@ $other-months-foreground: #999999
 			z-index: 0
 			
 	.day
-		width: #{$picker-width / 7}
+		width: calc(100% / 7)
 		height: #{$picker-width / 7}
 		
 	.month
-		width: #{$picker-width / 4}
+		width: calc(100% / 4)
 		height: #{$picker-width / 4}
 
-	.not-this-month
+	.other-scope
 		color: $other-months-foreground 

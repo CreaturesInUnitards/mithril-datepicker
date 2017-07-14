@@ -9,7 +9,7 @@ With the calendar visible, click the month/year heading to toggle year/month vie
 Making a choice will return to month/date view.
 
 ## Demo
-[mithril-datepicker at flems.io](http://tinyurl.com/yc2993p3)
+[mithril-datepicker at flems.io](http://tinyurl.com/mithril-datepicker)
 
 
 ## Usage
@@ -37,7 +37,4 @@ There are 2 optional attributes you can pass in via the component's ```attrs``` 
 
 You can change the appearance easily by editing either ```style.css``` or ```style.sass```,
 whichever fits your workflow. If you're using SASS, you have a lot of quick-change UI based on variables at the top of the document.
-  
-#### Firefox Problem:
-Firefox doesn't render correctly if the ```$picker-width``` isn't an even multiple of 7. Isn't that silly?
  
