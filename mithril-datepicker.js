@@ -169,6 +169,7 @@
 			var props = vnode.state.props
 			
 			return m('.mithril-date-picker-container'
+				, { class: props.active ? 'active' : '' }
 				, m('.mithril-date-picker'
 					
 					// CURRENT DATE BUTTON
