@@ -1,7 +1,7 @@
 ;(function () {
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-	var longMonths = [0, 2, 4, 6, 7, 9, 11]
+	var viewTitles = ['1 Mo', '1 Yr', '10 Yr']
 
 	/***************************************
 	 *
@@ -11,30 +11,33 @@
 
 	function chooseDate(vnode, e) {
 		var box = e.target
-		var date = parseInt(box.textContent)
-		var props = vnode.attrs.props
-
+		var selectedDate = parseInt(box.textContent)
+		var dateObj = vnode.attrs.props.date
 		if (box.classList.contains('other-scope')) {
-			stepMonth(props, date > 6 ? -1 : 1) // 6 === max days to display from prev or next month
+			dateObj.setFullYear(dateObj.getFullYear(), dateObj.getMonth() + (selectedDate > 6 ? -1 : 1), selectedDate)
+		} else {
+			dateObj.setDate(selectedDate)
 		}
+	}
 
-		props.date.setFullYear(props.year, props.month, date)
+	function dismiss(props) {
+		props.view = 0
+		props.active = false
 	}
 	
-	function stepMonth(props, delta) {
-		var obj = adjustedProps(props, delta)
-		props.month = obj.month
-		props.year = obj.year
+	function prevNext(props, delta){
+		var date = props.date
+		switch (props.view) {
+			case 0:
+				date.setMonth(date.getMonth() + delta)
+				break
+			case 1:
+				date.setFullYear(date.getFullYear() + delta)
+				break
+			default:
+				date.setFullYear(date.getFullYear() + (delta * 10))
+		}
 	}
-
-	function stepYear(props, delta) {
-		props.year += delta
-	}
-
-	function switchView(props) {
-		props.view = props.view < 2 ? props.view + 1 : 0
-	}
-
 
 	/***************************************
 	 *
@@ -43,7 +46,7 @@
 	 ***************************************/
 
 	function adjustedProps(props, delta) {
-		var month = props.month + delta, year = props.year
+		var month = props.date.getMonth() + delta, year = props.date.getFullYear() + delta
 		var over = month > 11, under = month < 0
 		return {
 			month: over ? 0 : under ? 11 : month,
@@ -51,17 +54,55 @@
 		}
 	}
 
+	function defaultDate() {
+		var now = new Date()
+		now.setHours(0, 0, 0, 0)
+		return now
+	}
+
 	function lastDateInMonth(props, delta) {
 		var obj = adjustedProps(props, delta)
-		if (longMonths.indexOf(obj.month) > -1) return 31
-		if (obj.month === 1) {
+		if ([0, 2, 4, 6, 7, 9, 11].indexOf(obj.month) > -1) return 31 // array of 31-day months
+		if (obj.month === 1) { // February
 			if (!(obj.year % 400)) return 29
 			if (!(obj.year % 100)) return 28
 			return (obj.year % 4) ? 28 : 29
 		}
-
 		return 30
 	}
+
+	/***************************************
+	 *
+	 * view helpers
+	 * 
+	 ***************************************/
+
+	function classForBox(a, b) { return a === b ? 'chosen' : '' }
+
+	function displayDate(date) {
+		return days[date.getDay()].substring(0, 3) + ' ' + months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
+	}
+
+	/***************************************
+	 *
+	 * attrs factories
+	 *
+	 ***************************************/
+	
+	var slideAttrs = function () {
+		return {
+			oncreate: function (vnode) {
+				requestAnimationFrame(function () { vnode.dom.classList.add('active') })
+			},
+			onbeforeremove: function (vnode) {
+				vnode.dom.classList.remove('active')
+				return new Promise(function (done) {
+					setTimeout(done, 200)
+				})
+			}
+		}
+	}
+
 
 	/***************************************
 	 *
@@ -69,17 +110,8 @@
 	 *
 	 ***************************************/
 
-	function currentView(vnode) {
-		var props = vnode.state.props 
-		switch(props.view) {
-			case 0: return m(MonthView, { props: props, commit: vnode.attrs.commit })
-			case 1: return m(YearView, { props: props })
-			case 2: return m(DecadeView, {props: props })
-		}
-	}
-
 	function daysFromLastMonth(props){
-		var month = props.month, year = props.year
+		var month = props.date.getMonth(), year = props.date.getFullYear()
 		var day = (new Date(year, month, 1)).getDay()
 		var array = []
 		if (day > 0) {
@@ -99,7 +131,7 @@
 	}
 
 	function daysFromNextMonth(props) {
-		var month = props.month, year = props.year
+		var month = props.date.getMonth(), year = props.date.getFullYear()
 		var lastDate = lastDateInMonth(props, 0)
 		var day = (new Date(year, month, lastDate)).getDay()
 		var array = []
@@ -109,76 +141,15 @@
 		return array
 	}
 
-	function defaultDate() {
-		var now = new Date()
-		now.setHours(0, 0, 0, 0)
-		return now
-	}
-
-	function decadeForYear(year) {
+	function yearsForDecade(date) {
+		var year = date.getFullYear()
 		var start = year - (year % 10)
 		var array = []
-		for (var i=start-1; i<start+11; i++) {
+		for (var i=start; i<start+10; i++) {
 			array.push(i)
 		}
 		return array
 	}
-
-	/***************************************
-	 *
-	 * view helpers
-	 * 
-	 ***************************************/
-	
-	function classForDateBox(props, date) {
-		if (props.year !== props.date.getFullYear() || props.month !== props.date.getMonth()) {
-			// TODO: if the chosen date is visible but in 'other' month, it should still get the 'chosen' class
-			return ''
-		}
-
-		return (props.date.getDate() === date) ? 'chosen' : ''
-	}
-
-	function classForMonthBox(props, month) {
-		return (props.date.getMonth() === month && props.date.getFullYear() === props.year) ? 'chosen' : ''
-	}
-
-	function classForYearBox(props, year, idx) {
-		if (props.date.getFullYear() === year) return 'chosen'
-		if (idx === 0 || idx === 11) return 'other-scope'
-		return ''
-	}
-
-	function displayDate(date) {
-		return days[date.getDay()].substring(0, 3) + ' ' + months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
-	}
-
-	function titleForDecade(year) {
-		return String(year).substring(0, 3) + '0s'
-	}
-
-
-	/***************************************
-	 *
-	 * attrs factory
-	 *
-	 ***************************************/
-
-	var fadeComponent = function(view){
-		return {
-			oncreate: function (vnode) {
-				requestAnimationFrame(function () { vnode.dom.classList.remove('incoming') })
-			},
-			onbeforeremove: function (vnode) {
-				vnode.dom.classList.add('incoming')
-				return new Promise(function (done) {
-					setTimeout(done, 2000)
-				})
-			},
-			view: view
-		}
-	}
-
 
 	/***************************************
 	 *
@@ -188,36 +159,50 @@
 	
 	var DatePicker = {
 		oninit: function (vnode) {
-			var date = vnode.attrs.date || defaultDate()
-			var year = date.getFullYear()
 			vnode.state.props = {
-				date: date,
-				month: date.getMonth(),
-				year: year,
+				date: vnode.attrs.date || defaultDate(),
 				active: false,
 				view: 0
 			}
 		},
-		view: function (vnode) {
+		view: function(vnode){
 			var props = vnode.state.props
-			var _currentView = currentView(vnode)
+			
 			return m('.mithril-date-picker-container'
-				, { class: props.active ? 'active' : '' }
 				, m('.mithril-date-picker'
-					, props.active ? m('.overlay', { onclick: function () { props.active = false } }) : null
-						, m('button.current-date'
-						, {
-							onclick: function () {
-								props.active = !props.active
-								props.yearView = false
-								props.month = props.date.getMonth()
-								props.year = props.date.getFullYear()
+					
+					// CURRENT DATE BUTTON
+					, m('.button.current-date'
+						, { 
+							onclick: function(){
+								if (props.active) props.view = 0
+								props.active = !props.active 
 							}
 						}
 						, displayDate(props.date)
 					)
+					
+					// OVERLAY
 					, props.active
-						? _currentView
+						? m('.overlay', { onclick: dismiss.bind(null, props) })
+						: null
+					
+					// EDITOR
+					, props.active
+						? m('.editor'
+							, slideAttrs()
+							
+							// HEADER
+							, m(Header, { props: props })
+							
+							// CALENDAR VIEWS
+							, m('.sled'
+								, { class: 'p' + props.view }
+								, m(MonthView, { props: props, commit: vnode.attrs.commit })
+								, m(YearView, { props: props })
+								, m(DecadeView, {props: props })
+							)
+						)
 						: null
 				)
 			)
@@ -227,97 +212,125 @@
 	var Header = {
 		view: function (vnode) {
 			var props = vnode.attrs.props
-			var step = props.view === 2 ? 10 : 1
-			return m('header'
+			var date = props.date
+			return m('.header'
+				, m('.button-bg', { class: 'v' + props.view })
+				, m('.fake-border')
 				, m('button.prev'
-					, { onclick: vnode.attrs.stepFn.bind(null, props, -step) }
+					, { onclick: prevNext.bind(null, props, -1)}
+					, viewTitles[props.view]
 				)
-				, m('button.month-year'
-					, { onclick: switchView.bind(null, props) }
-					, vnode.attrs.text
+				, m('button.segment'
+					, {
+						onclick: function () {
+							props.view = 0
+						}
+					}
+					, date.getDate()
+				)
+				, m('button.segment'
+					, {
+						onclick: function () {
+							props.view = 1
+						}
+					}
+					, months[date.getMonth()].substr(0, 3)
+				)
+				, m('button.segment'
+					, {
+						onclick: function () {
+							props.view = 2
+						}
+					}
+					, date.getFullYear()
 				)
 				, m('button.next'
-					, { onclick: vnode.attrs.stepFn.bind(null, props, step) }
+					, { onclick: prevNext.bind(null, props, 1)}
+					, viewTitles[props.view]
 				)
 			)
 		}
 	}
 
-	var MonthView = fadeComponent(function (vnode) {
-		var props = vnode.attrs.props
-		return m('.calendar.incoming'
-			, m(Header, { props: props, stepFn: stepMonth, text: months[props.month] + ' ' + props.year })
-			, m('.weekdays'
-				, days.map(function (day) {
-					return m('.day.dummy', day.substring(0, 1))
-				})
-			)
-			, m('.weekdays'
-				, { 
-					onclick: function(e){
-						chooseDate(vnode, e)
-						if (vnode.attrs.commit) vnode.attrs.commit(props.date)
-						props.active = false
-					} 
-				}
-				, daysFromLastMonth(props).map(function (date) {
-					return m('button.day.other-scope', date)
-				})
-				, daysFromThisMonth(props).map(function (date) {
-					return m('button.day'
-						, { class: classForDateBox(props, date) }
-						, m('.number', date)
-					)
-				})
-				, daysFromNextMonth(props).map(function (date) {
-					return m('button.day.other-scope', date)
-				})
-			)
-		)
-	})
-
-	var YearView = fadeComponent(function (vnode) {
-		var props = vnode.attrs.props
-		return m('.calendar.incoming'
-			, m(Header, { props: props, stepFn: stepYear, text: props.year })
-			, m('.months'
-				, months.map(function (month, idx) {
-					return m('button.month'
-						, {
-							class: classForMonthBox(props, idx),
-							onclick: function () {
-								props.month = idx
-								props.view--
-							}
+	var MonthView = {
+		view: function (vnode) {
+			var props = vnode.attrs.props
+			return m('.calendar'
+				, m('.weekdays'
+					, days.map(function (day) {
+						return m('.day.dummy', day.substring(0, 1))
+					})
+				)
+				, m('.weekdays'
+					, {
+						onclick: function(e){
+							chooseDate(vnode, e)
+							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
+							dismiss(props)
 						}
-						, m('.number', month.substring(0, 3))
-					)
-				})
+					}
+					, daysFromLastMonth(props).map(function (date) {
+						return m('button.day.other-scope', date)
+					})
+					, daysFromThisMonth(props).map(function (date) {
+						return m('button.day'
+							, { class: classForBox(props.date.getDate(), date) }
+							, m('.number', date)
+						)
+					})
+					, daysFromNextMonth(props).map(function (date) {
+						return m('button.day.other-scope', date)
+					})
+				)
 			)
-		)
-	})
+			
+		}
+	}
 	
-	var DecadeView = fadeComponent(function (vnode) {
-		var props = vnode.attrs.props
-		var decade = decadeForYear(vnode.attrs.props.year)
-		return m('.calendar.incoming'
-			, m(Header, { props: props, stepFn: stepYear, text: titleForDecade(props.year) })
-			, m('.years'
-				, decade.map(function (year, idx) {
-					return m('button.month'
-						, {
-							class: classForYearBox(props, year, idx),
-							onclick: function () {
-								props.year = year
-								props.view--
+	var YearView = {
+		view: function (vnode) {
+			var props = vnode.attrs.props
+			return m('.calendar'
+				, m('.months'
+					, months.map(function (month, idx) {
+						return m('button.month'
+							, {
+								class: classForBox(props.date.getMonth(), idx),
+								onclick: function () {
+									props.date.setMonth(idx)
+									props.view = 0
+								}
 							}
-						}
-						, m('.number', year)
-					)
-				})
+							, m('.number', month.substring(0, 3))
+						)
+					})
+				)
 			)
-		)
-	})
+		}
+	}
+	
+	var DecadeView = {
+		view: function (vnode) {
+			var props = vnode.attrs.props
+			var decade = yearsForDecade(props.date)
+			return m('.calendar'
+				, m('.years'
+					, decade.map(function (year) {
+						return m('button.year'
+							, {
+								class: classForBox(props.date.getFullYear(), year),
+								onclick: function () {
+									props.date.setFullYear(year)
+									props.view = 1
+								}
+							}
+							, m('.number', year)
+						)
+					})
+				)
+			)
+		}
+	}
 	
 	if (typeof module === 'object') module.exports = DatePicker
 	else window.DatePicker = DatePicker	
