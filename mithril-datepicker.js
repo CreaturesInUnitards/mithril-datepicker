@@ -54,12 +54,6 @@
 		}
 	}
 
-	function defaultDate() {
-		var now = new Date()
-		now.setHours(0, 0, 0, 0)
-		return now
-	}
-
 	function lastDateInMonth(props, delta) {
 		var obj = adjustedProps(props, delta)
 		if ([0, 2, 4, 6, 7, 9, 11].indexOf(obj.month) > -1) return 31 // array of 31-day months
@@ -85,27 +79,6 @@
 
 	/***************************************
 	 *
-	 * attrs factories
-	 *
-	 ***************************************/
-	
-	var slideAttrs = function () {
-		return {
-			oncreate: function (vnode) {
-				requestAnimationFrame(function () { vnode.dom.classList.add('active') })
-			},
-			onbeforeremove: function (vnode) {
-				vnode.dom.classList.remove('active')
-				return new Promise(function (done) {
-					setTimeout(done, 200)
-				})
-			}
-		}
-	}
-
-
-	/***************************************
-	 *
 	 * generators
 	 *
 	 ***************************************/
@@ -115,8 +88,8 @@
 		var day = (new Date(year, month, 1)).getDay()
 		var array = []
 		if (day > 0) {
-			var len = lastDateInMonth(props, -1)
-			for (var i=len-day+1; i<=len; i++) { array.push(i) }
+			var n = lastDateInMonth(props, -1)
+			for (var i=n-day+1; i<=n; i++) { array.push(i) }
 		}
 		return array
 	}
@@ -141,13 +114,17 @@
 		return array
 	}
 
+	function defaultDate() {
+		var now = new Date()
+		now.setHours(0, 0, 0, 0)
+		return now
+	}
+
 	function yearsForDecade(date) {
 		var year = date.getFullYear()
 		var start = year - (year % 10)
 		var array = []
-		for (var i=start; i<start+10; i++) {
-			array.push(i)
-		}
+		for (var i=start; i<start+10; i++) { array.push(i) }
 		return array
 	}
 
@@ -157,59 +134,6 @@
 	 *
 	 ***************************************/
 	
-	var DatePicker = {
-		oninit: function (vnode) {
-			vnode.state.props = {
-				date: vnode.attrs.date || defaultDate(),
-				active: false,
-				view: 0
-			}
-		},
-		view: function(vnode){
-			var props = vnode.state.props
-			
-			return m('.mithril-date-picker-container'
-				, { class: props.active ? 'active' : '' }
-				, m('.mithril-date-picker'
-					
-					// CURRENT DATE BUTTON
-					, m('.button.current-date'
-						, { 
-							onclick: function(){
-								if (props.active) props.view = 0
-								props.active = !props.active 
-							}
-						}
-						, displayDate(props.date)
-					)
-					
-					// OVERLAY
-					, props.active
-						? m('.overlay', { onclick: dismiss.bind(null, props) })
-						: null
-					
-					// EDITOR
-					, props.active
-						? m('.editor'
-							, slideAttrs()
-							
-							// HEADER
-							, m(Header, { props: props })
-							
-							// CALENDAR VIEWS
-							, m('.sled'
-								, { class: 'p' + props.view }
-								, m(MonthView, { props: props, commit: vnode.attrs.commit })
-								, m(YearView, { props: props })
-								, m(DecadeView, {props: props })
-							)
-						)
-						: null
-				)
-			)
-		}
-	}
-	
 	var Header = {
 		view: function (vnode) {
 			var props = vnode.attrs.props
@@ -218,35 +142,24 @@
 				, m('.button-bg', { class: 'v' + props.view })
 				, m('.fake-border')
 				, m('button.prev'
-					, { onclick: prevNext.bind(null, props, -1)}
+					, {
+						onclick: function() {
+							prevNext(props, -1)
+							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
+						}
+					}
 					, viewTitles[props.view]
 				)
-				, m('button.segment'
-					, {
-						onclick: function () {
-							props.view = 0
-						}
-					}
-					, date.getDate()
-				)
-				, m('button.segment'
-					, {
-						onclick: function () {
-							props.view = 1
-						}
-					}
-					, months[date.getMonth()].substr(0, 3)
-				)
-				, m('button.segment'
-					, {
-						onclick: function () {
-							props.view = 2
-						}
-					}
-					, date.getFullYear()
-				)
+				, m('button.segment', { onclick: function () { props.view = 0 } }, date.getDate())
+				, m('button.segment', { onclick: function () { props.view = 1 } }, months[date.getMonth()].substr(0, 3))
+				, m('button.segment', { onclick: function () { props.view = 2 } }, date.getFullYear())
 				, m('button.next'
-					, { onclick: prevNext.bind(null, props, 1)}
+					, {
+						onclick: function() {
+							prevNext(props, 1)
+							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
+						}
+					}
 					, viewTitles[props.view]
 				)
 			)
@@ -330,6 +243,63 @@
 							, m('.number', year)
 						)
 					})
+				)
+			)
+		}
+	}
+
+	var Editor = {
+		oncreate: function (vnode) {
+			requestAnimationFrame(function () { vnode.dom.classList.add('active') })
+		},
+		onbeforeremove: function (vnode) {
+			vnode.dom.classList.remove('active')
+			return new Promise(function (done) { setTimeout(done, 200) })
+		},
+		view: function (vnode) {
+			var props = vnode.attrs.props
+			return m('.editor'
+				, m(Header, { props: props, commit: vnode.attrs.commit })
+				, m('.sled'
+					, { class: 'p' + props.view }
+					, m(MonthView, { props: props, commit: vnode.attrs.commit })
+					, m(YearView, { props: props, commit: vnode.attrs.commit })
+					, m(DecadeView, {props: props, commit: vnode.attrs.commit })
+				)
+			)
+		}
+	}
+
+	var DatePicker = {
+		oninit: function (vnode) {
+			vnode.state.props = {
+				date: new Date(vnode.attrs.date || defaultDate()),
+				active: false,
+				view: 0
+			}
+		},
+		view: function(vnode){
+			var props = vnode.state.props
+			var displayText = displayDate(props.date)
+			return m('.mithril-date-picker-container'
+				, { class: props.active ? 'active' : '' }
+				, m('.mithril-date-picker'
+					, m('.button.current-date'
+						, {
+							onclick: function(){
+								if (props.active) props.view = 0
+								props.active = !props.active
+							}
+						}
+						, displayText
+					)
+
+					, props.active
+						? [
+							m('.overlay', { onclick: dismiss.bind(null, props) }),
+							m(Editor, { props: props, commit: vnode.attrs.commit })
+						]
+						: null
 				)
 			)
 		}
