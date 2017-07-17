@@ -300,6 +300,7 @@
 								onclick: function () {
 									props.date.setMonth(idx)
 									props.view = 0
+									if (vnode.attrs.commit) vnode.attrs.commit(props.date)
 								}
 							}
 							, m('.number', month.substring(0, 3))
@@ -323,6 +324,7 @@
 								onclick: function () {
 									props.date.setFullYear(year)
 									props.view = 1
+									if (vnode.attrs.commit) vnode.attrs.commit(props.date)
 								}
 							}
 							, m('.number', year)
