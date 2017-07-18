@@ -176,18 +176,10 @@
     .mithril-date-picker .day .number, .mithril-date-picker .month .number, .mithril-date-picker .year .number {
       position: relative;
       z-index: 1; }
-    .mithril-date-picker .day.chosen:before, .mithril-date-picker .month.chosen:before, .mithril-date-picker .year.chosen:before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%;
-      height: 80%;
-      border-radius: 50%;
-      border: 1px solid #222222;
+    .mithril-date-picker .day.chosen, .mithril-date-picker .month.chosen, .mithril-date-picker .year.chosen {
       background: white;
-      z-index: 0; }
+      border: 2px solid #333333;
+      font-weight: 700; }
   .mithril-date-picker .day {
     width: 44px;
     height: 44px; }

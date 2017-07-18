@@ -239,18 +239,10 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			position: relative
 			z-index: 1
 
-		&.chosen:before 
-			content: ''
-			position: absolute
-			top: 50%
-			left: 50%
-			transform: translate(-50%, -50%)
-			width: 80%
-			height: 80%
-			border-radius: 50%
-			border: 1px solid $chosen-day-stroke
+		&.chosen
 			background: $chosen-day-fill
-			z-index: 0
+			border: 2px solid $calendar-head-background
+			font-weight: 700
 
 	.day
 		width: #{$hit-target-minimum-size}px
