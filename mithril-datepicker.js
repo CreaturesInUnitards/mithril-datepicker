@@ -20,9 +20,10 @@
 		}
 	}
 
-	function dismiss(props) {
+	function dismissAndCommit(props, commitFn) {
 		props.view = 0
 		props.active = false
+		if (commitFn) commitFn(props.date)
 	}
 	
 	function prevNext(props, delta){
@@ -142,24 +143,14 @@
 				, m('.button-bg', { class: 'v' + props.view })
 				, m('.fake-border')
 				, m('button.prev'
-					, {
-						onclick: function() {
-							prevNext(props, -1)
-							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
-						}
-					}
+					, { onclick: prevNext.bind(null, props, -1) }
 					, viewTitles[props.view]
 				)
 				, m('button.segment', { onclick: function () { props.view = 0 } }, date.getDate())
 				, m('button.segment', { onclick: function () { props.view = 1 } }, months[date.getMonth()].substr(0, 3))
 				, m('button.segment', { onclick: function () { props.view = 2 } }, date.getFullYear())
 				, m('button.next'
-					, {
-						onclick: function() {
-							prevNext(props, 1)
-							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
-						}
-					}
+					, { onclick: prevNext.bind(null, props, 1) }
 					, viewTitles[props.view]
 				)
 			)
@@ -179,8 +170,7 @@
 					, {
 						onclick: function(e){
 							chooseDate(vnode, e)
-							if (vnode.attrs.commit) vnode.attrs.commit(props.date)
-							dismiss(props)
+							dismissAndCommit(props, vnode.attrs.commit)
 						}
 					}
 					, daysFromLastMonth(props).map(function (date) {
@@ -213,7 +203,6 @@
 								onclick: function () {
 									props.date.setMonth(idx)
 									props.view = 0
-									if (vnode.attrs.commit) vnode.attrs.commit(props.date)
 								}
 							}
 							, m('.number', month.substring(0, 3))
@@ -237,7 +226,6 @@
 								onclick: function () {
 									props.date.setFullYear(year)
 									props.view = 1
-									if (vnode.attrs.commit) vnode.attrs.commit(props.date)
 								}
 							}
 							, m('.number', year)
@@ -259,12 +247,12 @@
 		view: function (vnode) {
 			var props = vnode.attrs.props
 			return m('.editor'
-				, m(Header, { props: props, commit: vnode.attrs.commit })
+				, m(Header, { props: props })
 				, m('.sled'
 					, { class: 'p' + props.view }
 					, m(MonthView, { props: props, commit: vnode.attrs.commit })
-					, m(YearView, { props: props, commit: vnode.attrs.commit })
-					, m(DecadeView, {props: props, commit: vnode.attrs.commit })
+					, m(YearView, { props: props })
+					, m(DecadeView, {props: props })
 				)
 			)
 		}
@@ -295,10 +283,10 @@
 					)
 
 					, props.active
-						? [
-							m('.overlay', { onclick: dismiss.bind(null, props) }),
-							m(Editor, { props: props, commit: vnode.attrs.commit })
-						]
+						? m('.overlay', { onclick: dismissAndCommit.bind(null, props, vnode.attrs.commit) })
+						: null
+					, props.active
+						? m(Editor, { props: props, commit: vnode.attrs.commit })
 						: null
 				)
 			)

@@ -86,7 +86,7 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 		overflow: hidden
 
 		&.active
-			height: 400px
+			height: #{$hit-target-minimum-size * 8.1225}px
 
 	.header
 		position: relative
@@ -109,6 +109,7 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			min-width: #{$hit-target-minimum-size}px
 			font-size: #{$hit-target-minimum-size / 3}px
 			color: white
+			white-space: nowrap
 
 			&:after
 				content: ''

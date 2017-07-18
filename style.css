@@ -51,7 +51,7 @@
     z-index: 1;
     overflow: hidden; }
     .mithril-date-picker .editor.active {
-      height: 400px; }
+      height: 357.39px; }
   .mithril-date-picker .header {
     position: relative;
     display: flex;
@@ -70,7 +70,8 @@
     .mithril-date-picker .header button.prev, .mithril-date-picker .header button.next {
       min-width: 44px;
       font-size: 14.66667px;
-      color: white; }
+      color: white;
+      white-space: nowrap; }
       .mithril-date-picker .header button.prev:after, .mithril-date-picker .header button.next:after {
         content: "";
         position: absolute;
