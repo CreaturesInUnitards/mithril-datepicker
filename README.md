@@ -2,7 +2,7 @@
 Pick a date! But only if you're using Mithril, and only for flexbox-capable browsers.
 
 ## Demo
-[mithril-datepicker at flems.io](http://tinyurl.com/ybe2byow)
+[mithril-datepicker at flems.io](http://tinyurl.com/ybm6uhub)
 
 
 ## Usage
