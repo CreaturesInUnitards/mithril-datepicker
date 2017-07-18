@@ -9,10 +9,10 @@
 	 *
 	 ***************************************/
 
-	function chooseDate(vnode, e) {
+	function chooseDate(props, e) {
 		var box = e.target
 		var selectedDate = parseInt(box.textContent)
-		var dateObj = vnode.attrs.props.date
+		var dateObj = props.date
 		if (box.classList.contains('other-scope')) {
 			dateObj.setFullYear(dateObj.getFullYear(), dateObj.getMonth() + (selectedDate > 6 ? -1 : 1), selectedDate)
 		} else {
@@ -27,17 +27,18 @@
 	}
 	
 	function prevNext(props, delta){
-		var date = props.date
+		var newDate = new Date(props.date)
 		switch (props.view) {
 			case 0:
-				date.setMonth(date.getMonth() + delta)
+				newDate.setMonth(newDate.getMonth() + delta)
 				break
 			case 1:
-				date.setFullYear(date.getFullYear() + delta)
+				newDate.setFullYear(newDate.getFullYear() + delta)
 				break
 			default:
-				date.setFullYear(date.getFullYear() + (delta * 10))
+				newDate.setFullYear(newDate.getFullYear() + (delta * 10))
 		}
+		props.date = pushTolastDay(props.date, newDate)
 	}
 
 	/***************************************
@@ -46,8 +47,8 @@
 	 *
 	 ***************************************/
 
-	function adjustedProps(props, delta) {
-		var month = props.date.getMonth() + delta, year = props.date.getFullYear() + delta
+	function adjustedProps(date, delta) {
+		var month = date.getMonth() + delta, year = date.getFullYear()
 		var over = month > 11, under = month < 0
 		return {
 			month: over ? 0 : under ? 11 : month,
@@ -55,8 +56,8 @@
 		}
 	}
 
-	function lastDateInMonth(props, delta) {
-		var obj = adjustedProps(props, delta)
+	function lastDateInMonth(date, delta) {
+		var obj = adjustedProps(date, delta)
 		if ([0, 2, 4, 6, 7, 9, 11].indexOf(obj.month) > -1) return 31 // array of 31-day months
 		if (obj.month === 1) { // February
 			if (!(obj.year % 400)) return 29
@@ -64,6 +65,13 @@
 			return (obj.year % 4) ? 28 : 29
 		}
 		return 30
+	}
+
+	function pushTolastDay(oldDate, newDate) {
+		if (oldDate.getDate() !== newDate.getDate()) {
+			newDate.setMonth(newDate.getMonth() - 1, lastDateInMonth(newDate, -1))
+		}
+		return newDate
 	}
 
 	/***************************************
@@ -89,14 +97,14 @@
 		var day = (new Date(year, month, 1)).getDay()
 		var array = []
 		if (day > 0) {
-			var n = lastDateInMonth(props, -1)
+			var n = lastDateInMonth(props.date, -1)
 			for (var i=n-day+1; i<=n; i++) { array.push(i) }
 		}
 		return array
 	}
 
 	function daysFromThisMonth(props) {
-		var max = lastDateInMonth(props, 0)
+		var max = lastDateInMonth(props.date, 0)
 		var array = []
 		for (var i=1; i<=max; i++) {
 			array.push(i)
@@ -106,7 +114,7 @@
 
 	function daysFromNextMonth(props) {
 		var month = props.date.getMonth(), year = props.date.getFullYear()
-		var lastDate = lastDateInMonth(props, 0)
+		var lastDate = lastDateInMonth(props.date, 0)
 		var day = (new Date(year, month, lastDate)).getDay()
 		var array = []
 		if (day < 6) {
@@ -169,7 +177,7 @@
 				, m('.weekdays'
 					, {
 						onclick: function(e){
-							chooseDate(vnode, e)
+							chooseDate(props, e)
 							dismissAndCommit(props, vnode.attrs.commit)
 						}
 					}
@@ -201,7 +209,9 @@
 							, {
 								class: classForBox(props.date.getMonth(), idx),
 								onclick: function () {
-									props.date.setMonth(idx)
+									var newDate = new Date(props.date)
+									newDate.setMonth(idx)
+									props.date = pushTolastDay(props.date, newDate)
 									props.view = 0
 								}
 							}
@@ -224,7 +234,9 @@
 							, {
 								class: classForBox(props.date.getFullYear(), year),
 								onclick: function () {
-									props.date.setFullYear(year)
+									var newDate = new Date(props.date)
+									newDate.setFullYear(year)
+									props.date = pushTolastDay(props.date, newDate)
 									props.view = 1
 								}
 							}
