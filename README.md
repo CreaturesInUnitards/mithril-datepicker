@@ -8,7 +8,7 @@ Pick a date! But only if you're using Mithril, and only for flexbox-capable brow
 ## Usage
 Works with Node.js modules, or as a standalone ES5 script. Either ```require``` it, or simply include a ```script``` tag sometime after including ```mithril```. then just use it as a component:
 
-```
+```js
 var DatePicker = require('path/to/mithril-datepicker.js')
 var myDate = new Date(someSpecialDateYouHaveInMind)
 
@@ -45,7 +45,7 @@ starting day.
 
 To globally set the language for all datepickers in your project:
 
-```
+```js
 DatePicker.localize({
   weekStart: 1, // 
   days: ['Domingo', 'Lunes', 'Martes'...],
@@ -57,12 +57,12 @@ DatePicker.localize({
 To set the language for a single datepicker, overriding the default/global setting, pass a ```localeData``` object to
 the component's ```attrs```:
 
-```
+```js
 m(DatePicker, {
   date: myDate,
   onchange: myOnchangeFn,
   localeData: {
-    days: ['Lunes', 'Martes'...],
+    days: ['Domingo', 'Lunes', 'Martes'...],
     months: ['Enero', 'Febrero'...],
     prevNextTitles: ['1 Me', '1 Añ', '10 Añ']
   } 
