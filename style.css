@@ -18,7 +18,8 @@
   margin: 0 4px; }
   .mithril-date-picker *, .mithril-date-picker button {
     font-family: Optima, Helvetica, Arial, sans-serif;
-    outline: none; }
+    outline: none;
+    padding: 0; }
   .mithril-date-picker .current-date {
     position: relative;
     width: 308px;
@@ -41,7 +42,6 @@
     opacity: 0; }
   .mithril-date-picker .editor {
     position: absolute;
-    box-sizing: border-box;
     margin: 0 4px;
     top: 0;
     left: 0;

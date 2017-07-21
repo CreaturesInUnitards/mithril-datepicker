@@ -6,6 +6,8 @@
 $datepicker-width: 308
 
 
+
+
 // Here's your color palette. Hack away!
 $current-date-foreground: #555555
 $current-date-background: #eeeeee
@@ -49,6 +51,7 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 	*, button
 		font-family: Optima, Helvetica, Arial, sans-serif
 		outline: none
+		padding: 0
 
 	.current-date
 		position: relative
@@ -75,7 +78,6 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 
 	.editor
 		position: absolute
-		box-sizing: border-box
 		margin: 0 4px
 		top: 0
 		left: 0
@@ -250,11 +252,11 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 
 	.month
 		width: 25%
-		height: #{$hit-target-minimum-size * 7 / 4}px
+		height: #{$datepicker-width / 4}px
 
 	.year
 		width: 20%
-		height: #{$hit-target-minimum-size * 7 / 5}px
+		height: #{$datepicker-width / 5}px
 
 	.other-scope
 		color: $other-months-foreground 
