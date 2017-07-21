@@ -1,7 +1,10 @@
 ;(function () {
+	var m = (typeof require !== 'undefined') ? require('mithril') : window.m
+	if (!m) throw ("Mithril doesn't seem to be showing up anywhere. You should probably get that figured out.")
+	
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-	var viewTitles = ['1 Mo', '1 Yr', '10 Yr']
+	var prevNextTitles = ['1 Mo', '1 Yr', '10 Yr']
 
 	/***************************************
 	 *
@@ -20,10 +23,10 @@
 		}
 	}
 
-	function dismissAndCommit(props, commitFn) {
+	function dismissAndCommit(props, onchange) {
 		props.view = 0
 		props.active = false
-		if (commitFn) commitFn(props.date)
+		if (onchange) onchange(props.date)
 	}
 	
 	function prevNext(props, delta){
@@ -58,7 +61,7 @@
 
 	function lastDateInMonth(date, delta) {
 		var obj = adjustedProps(date, delta)
-		if ([0, 2, 4, 6, 7, 9, 11].indexOf(obj.month) > -1) return 31 // array of 31-day months
+		if ([0, 2, 4, 6, 7, 9, 11].indexOf(obj.month) > -1) return 31 // array of 31-day props.months
 		if (obj.month === 1) { // February
 			if (!(obj.year % 400)) return 29
 			if (!(obj.year % 100)) return 28
@@ -74,6 +77,12 @@
 		return newDate
 	}
 
+	function wrapAround(idx, array) {
+		var len = array.length
+		var n = idx >= len ? idx - len : idx
+		return array[n]
+	}
+
 	/***************************************
 	 *
 	 * view helpers
@@ -82,8 +91,9 @@
 
 	function classForBox(a, b) { return a === b ? 'chosen' : '' }
 
-	function displayDate(date) {
-		return days[date.getDay()].substring(0, 3) + ' ' + months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
+	function displayDate(props) {
+		var date = props.date
+		return props.days[date.getDay()].substring(0, 3) + ' ' + props.months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
 	}
 
 	/***************************************
@@ -94,12 +104,12 @@
 
 	function daysFromLastMonth(props){
 		var month = props.date.getMonth(), year = props.date.getFullYear()
-		var day = (new Date(year, month, 1)).getDay()
+		var firstDay = (new Date(year, month, 1)).getDay() - props.weekStart
+		if (firstDay < 0) firstDay += 7
 		var array = []
-		if (day > 0) {
-			var n = lastDateInMonth(props.date, -1)
-			for (var i=n-day+1; i<=n; i++) { array.push(i) }
-		}
+		var lastDate = lastDateInMonth(props.date, -1)
+		var offsetStart = lastDate - firstDay + 1
+		for (var i=offsetStart; i<=lastDate; i++) { array.push(i) }
 		return array
 	}
 
@@ -112,13 +122,13 @@
 		return array
 	}
 
-	function daysFromNextMonth(props) {
-		var month = props.date.getMonth(), year = props.date.getFullYear()
-		var lastDate = lastDateInMonth(props.date, 0)
-		var day = (new Date(year, month, lastDate)).getDay()
+	function daysFromNextMonth(prev, these) {
+		var soFar = prev.concat(these)
+		var mod = soFar.length % 7
 		var array = []
-		if (day < 6) {
-			for (var i=1; i<=6-day; i++) { array.push(i) }
+		if (mod > 0) {
+			var n = 7 - mod
+			for (var i=1; i<=n; i++) { array.push(i) }
 		}
 		return array
 	}
@@ -152,14 +162,14 @@
 				, m('.fake-border')
 				, m('button.prev'
 					, { onclick: prevNext.bind(null, props, -1) }
-					, viewTitles[props.view]
+					, prevNextTitles[props.view]
 				)
 				, m('button.segment', { onclick: function () { props.view = 0 } }, date.getDate())
-				, m('button.segment', { onclick: function () { props.view = 1 } }, months[date.getMonth()].substr(0, 3))
+				, m('button.segment', { onclick: function () { props.view = 1 } }, props.months[date.getMonth()].substr(0, 3))
 				, m('button.segment', { onclick: function () { props.view = 2 } }, date.getFullYear())
 				, m('button.next'
 					, { onclick: prevNext.bind(null, props, 1) }
-					, viewTitles[props.view]
+					, prevNextTitles[props.view]
 				)
 			)
 		}
@@ -168,29 +178,33 @@
 	var MonthView = {
 		view: function (vnode) {
 			var props = vnode.attrs.props
+			var prevDays = daysFromLastMonth(props)
+			var theseDays = daysFromThisMonth(props)
+			var nextDays = daysFromNextMonth(prevDays, theseDays)
 			return m('.calendar'
 				, m('.weekdays'
-					, days.map(function (day) {
-						return m('.day.dummy', day.substring(0, 1))
+					, props.days.map(function (_, idx) {
+						var day = wrapAround(idx + props.weekStart, props.days)
+						return m('.day.dummy', day.substring(0, 2))
 					})
 				)
 				, m('.weekdays'
 					, {
 						onclick: function(e){
 							chooseDate(props, e)
-							dismissAndCommit(props, vnode.attrs.commit)
+							dismissAndCommit(props, vnode.attrs.onchange)
 						}
 					}
-					, daysFromLastMonth(props).map(function (date) {
+					, prevDays.map(function (date) {
 						return m('button.day.other-scope', date)
 					})
-					, daysFromThisMonth(props).map(function (date) {
+					, theseDays.map(function (date) {
 						return m('button.day'
 							, { class: classForBox(props.date.getDate(), date) }
 							, m('.number', date)
 						)
 					})
-					, daysFromNextMonth(props).map(function (date) {
+					, nextDays.map(function (date) {
 						return m('button.day.other-scope', date)
 					})
 				)
@@ -204,7 +218,7 @@
 			var props = vnode.attrs.props
 			return m('.calendar'
 				, m('.months'
-					, months.map(function (month, idx) {
+					, props.months.map(function (month, idx) {
 						return m('button.month'
 							, {
 								class: classForBox(props.date.getMonth(), idx),
@@ -262,7 +276,7 @@
 				, m(Header, { props: props })
 				, m('.sled'
 					, { class: 'p' + props.view }
-					, m(MonthView, { props: props, commit: vnode.attrs.commit })
+					, m(MonthView, { props: props, onchange: vnode.attrs.onchange })
 					, m(YearView, { props: props })
 					, m(DecadeView, {props: props })
 				)
@@ -271,16 +285,28 @@
 	}
 
 	var DatePicker = {
+		localize: function (loc) {
+			if (loc) {
+				days = loc.days || days
+				months = loc.months || months
+				prevNextTitles = loc.prevNextTitles || prevNextTitles
+			}
+		},
 		oninit: function (vnode) {
+			var localeData = vnode.attrs.localeData
 			vnode.state.props = {
 				date: new Date(vnode.attrs.date || defaultDate()),
 				active: false,
-				view: 0
+				view: 0,
+				days: localeData && localeData.days ? localeData.days : days,
+				months: localeData && localeData.months ? localeData.months : months,
+				prevNextTitles: localeData && localeData.prevNextTitles ? localeData.prevNextTitles : prevNextTitles,
+				weekStart: localeData && localeData.weekStart ? localeData.weekStart: 0
 			}
 		},
 		view: function(vnode){
 			var props = vnode.state.props
-			var displayText = displayDate(props.date)
+			var displayText = displayDate(props)
 			return m('.mithril-date-picker-container'
 				, { class: props.active ? 'active' : '' }
 				, m('.mithril-date-picker'
@@ -295,10 +321,10 @@
 					)
 
 					, props.active
-						? m('.overlay', { onclick: dismissAndCommit.bind(null, props, vnode.attrs.commit) })
+						? m('.overlay', { onclick: dismissAndCommit.bind(null, props, vnode.attrs.onchange) })
 						: null
 					, props.active
-						? m(Editor, { props: props, commit: vnode.attrs.commit })
+						? m(Editor, { props: props, onchange: vnode.attrs.onchange })
 						: null
 				)
 			)
