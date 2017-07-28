@@ -1,10 +1,16 @@
 ;(function () {
-	var m = (typeof require !== 'undefined') ? require('mithril') : window.m
-	if (!m) throw ("Mithril doesn't seem to be showing up anywhere. You should probably get that figured out.")
+	var m = (typeof global !== 'undefined') 
+		? (global.m || require('mithril'))
+		: window.m
+
+	if (!m) throw ("Can't find Mithril.js")
 	
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 	var prevNextTitles = ['1 Mo', '1 Yr', '10 Yr']
+	var weekStart = 0
+	var locale = 'en-us'
+	var locOptions = null
 
 	/***************************************
 	 *
@@ -41,7 +47,7 @@
 			default:
 				newDate.setFullYear(newDate.getFullYear() + (delta * 10))
 		}
-		props.date = pushTolastDay(props.date, newDate)
+		props.date = pushToLastDay(props.date, newDate)
 	}
 
 	/***************************************
@@ -70,30 +76,30 @@
 		return 30
 	}
 
-	function pushTolastDay(oldDate, newDate) {
+	function pushToLastDay(oldDate, newDate) {
 		if (oldDate.getDate() !== newDate.getDate()) {
 			newDate.setMonth(newDate.getMonth() - 1, lastDateInMonth(newDate, -1))
 		}
 		return newDate
 	}
 
+	function stringsForLocale(locale) {
+		var date = new Date('jan 1 2017'), _months = [], _days = [] // 1/1/2017 was month:0 and weekday:0, so perfect
+		while (_days.length < 7) {
+			_days.push(date.toLocaleDateString(locale, { weekday: 'long' }))
+			date.setDate(date.getDate() + 1)
+		}
+		while (_months.length < 12) {
+			_months.push(date.toLocaleDateString(locale, { month: 'long' }))
+			date.setMonth(date.getMonth() + 1)
+		}
+		return { days: _days, months: _months }
+	}
+
 	function wrapAround(idx, array) {
 		var len = array.length
 		var n = idx >= len ? idx - len : idx
 		return array[n]
-	}
-
-	/***************************************
-	 *
-	 * view helpers
-	 * 
-	 ***************************************/
-
-	function classForBox(a, b) { return a === b ? 'chosen' : '' }
-
-	function displayDate(props) {
-		var date = props.date
-		return props.days[date.getDay()].substring(0, 3) + ' ' + props.months[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
 	}
 
 	/***************************************
@@ -145,6 +151,24 @@
 		var array = []
 		for (var i=start; i<start+10; i++) { array.push(i) }
 		return array
+	}
+
+	/***************************************
+	 *
+	 * view helpers
+	 *
+	 ***************************************/
+
+	function classForBox(a, b) { return a === b ? 'chosen' : '' }
+
+	function displayDate(props) {
+		return props.date
+			.toLocaleDateString(props.locale, props.locOptions || {
+				weekday: 'short',
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric'
+			})
 	}
 
 	/***************************************
@@ -225,7 +249,7 @@
 								onclick: function () {
 									var newDate = new Date(props.date)
 									newDate.setMonth(idx)
-									props.date = pushTolastDay(props.date, newDate)
+									props.date = pushToLastDay(props.date, newDate)
 									props.view = 0
 								}
 							}
@@ -250,7 +274,7 @@
 								onclick: function () {
 									var newDate = new Date(props.date)
 									newDate.setFullYear(year)
-									props.date = pushTolastDay(props.date, newDate)
+									props.date = pushToLastDay(props.date, newDate)
 									props.view = 1
 								}
 							}
@@ -287,22 +311,33 @@
 	var DatePicker = {
 		localize: function (loc) {
 			if (loc) {
-				days = loc.days || days
-				months = loc.months || months
 				prevNextTitles = loc.prevNextTitles || prevNextTitles
+				weekStart = loc.weekStart || weekStart
+				locale = loc.locale || locale
+				locOptions = loc.locOptions || locOptions
+				
+				var obj = stringsForLocale(locale)
+				days = obj.days
+				months = obj.months
 			}
 		},
 		oninit: function (vnode) {
-			var localeData = vnode.attrs.localeData
-			vnode.state.props = {
+			var props = {
 				date: new Date(vnode.attrs.date || defaultDate()),
 				active: false,
-				view: 0,
-				days: localeData && localeData.days ? localeData.days : days,
-				months: localeData && localeData.months ? localeData.months : months,
-				prevNextTitles: localeData && localeData.prevNextTitles ? localeData.prevNextTitles : prevNextTitles,
-				weekStart: localeData && localeData.weekStart ? localeData.weekStart: 0
+				view: 0
 			}
+
+			var localeData = vnode.attrs.localeData
+			;['prevNextTitles', 'weekStart', 'locale', 'locOptions'].forEach(function (prop) {
+				props[prop] = localeData && localeData[prop] ? localeData[prop] : eval(prop)
+			})
+
+			var strings = stringsForLocale(props.locale)
+			props.days = strings.days
+			props.months = strings.months
+
+			vnode.state.props = props
 		},
 		view: function(vnode){
 			var props = vnode.state.props
@@ -319,18 +354,14 @@
 						}
 						, displayText
 					)
-
-					, props.active
-						? m('.overlay', { onclick: dismissAndCommit.bind(null, props, vnode.attrs.onchange) })
-						: null
-					, props.active
-						? m(Editor, { props: props, onchange: vnode.attrs.onchange })
-						: null
+					, props.active && m('.overlay', { onclick: dismissAndCommit.bind(null, props, vnode.attrs.onchange) })
+					, props.active && m(Editor, { props: props, onchange: vnode.attrs.onchange })
 				)
 			)
 		}
 	}
 	
 	if (typeof module === 'object') module.exports = DatePicker
-	else window.DatePicker = DatePicker	
+	else if (typeof window !== 'undefined') window.DatePicker = DatePicker
+	else global.DatePicker = DatePicker	
 })()

@@ -1,33 +1,33 @@
-// $datepicker-width sets the overall size of the widget. Keep in mind that Firefox kind
+// $ciu-datepicker-width sets the overall size of the widget. Keep in mind that Firefox kind
 // of sucks at CSS rendering, especially teeny little fine detail stuff, so try to keep 
 // this value over 224, and for best results on Firefox always use a multiple of 7. Also
 // remember that for touch interfaces, 44pt is the recommended minimum hit target dimension,
 // so that means 308 should be your smallest option here.
-$datepicker-width: 308
+$ciu-datepicker-width: 308
 
 
 
 
 // Here's your color palette. Hack away!
-$current-date-foreground: #555555
-$current-date-background: #eeeeee
-$calendar-head-background: #333333
-$calendar-head-foreground: white
-$calendar-body-background: #eeeeee
-$calendar-body-foreground: #555555
-$chosen-day-stroke: #222222
-$chosen-day-fill: white
-$other-months-foreground: #999999
+$ciu-current-date-foreground: #555555
+$ciu-current-date-background: #eeeeee
+$ciu-calendar-head-background: #333333
+$ciu-calendar-head-foreground: white
+$ciu-calendar-body-background: #eeeeee
+$ciu-calendar-body-foreground: #555555
+$ciu-chosen-day-stroke: #222222
+$ciu-chosen-day-fill: white
+$ciu-other-months-foreground: #999999
 
 
 
 
 /*********************** NO USER-SERVICEABLE PARTS INSIDE ***********************/
-$hit-target-minimum-size: $datepicker-width / 7
-$segment-width: ($datepicker-width - (2 * $hit-target-minimum-size)) / 3 - 10
-$current-date-font-size: #{$hit-target-minimum-size / 2}px
-$prev-next-edge-margin: #{$hit-target-minimum-size * 0.16}px
-$calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
+$ciu-hit-target-minimum-size: $ciu-datepicker-width / 7
+$ciu-segment-width: ($ciu-datepicker-width - (2 * $ciu-hit-target-minimum-size)) / 3 - 10
+$ciu-current-date-font-size: #{$ciu-hit-target-minimum-size / 2}px
+$ciu-prev-next-edge-margin: #{$ciu-hit-target-minimum-size * 0.16}px
+$ciu-calendar-body-font-size: #{$ciu-hit-target-minimum-size / 2.5}px
 /********************************************************************************/
 
 .mithril-date-picker-container
@@ -55,12 +55,12 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 
 	.current-date
 		position: relative
-		width: #{$datepicker-width}px
-		background: $current-date-background
+		width: #{$ciu-datepicker-width}px
+		background: $ciu-current-date-background
 		border: 0
-		color: $current-date-foreground
+		color: $ciu-current-date-foreground
 		padding: 10px
-		font-size: $current-date-font-size
+		font-size: $ciu-current-date-font-size
 		text-align: center
 		cursor: pointer
 		z-index: 1
@@ -81,14 +81,14 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 		margin: 0 4px
 		top: 0
 		left: 0
-		width: #{$datepicker-width}px
+		width: #{$ciu-datepicker-width}px
 		height: 0
 		transition: height 0.2s
 		z-index: 1
 		overflow: hidden
 
 		&.active
-			height: #{$hit-target-minimum-size * 8.1225}px
+			height: #{$ciu-hit-target-minimum-size * 8.1225}px
 
 	.header
 		position: relative
@@ -102,44 +102,44 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			position: relative
 			padding: 0
 			margin: 0
-			height: #{$hit-target-minimum-size}px
+			height: #{$ciu-hit-target-minimum-size}px
 			background: none
 			border: 0
 			cursor: pointer
 
 		button.prev, button.next
-			min-width: #{$hit-target-minimum-size}px
-			font-size: #{$hit-target-minimum-size / 3}px
+			min-width: #{$ciu-hit-target-minimum-size}px
+			font-size: #{$ciu-hit-target-minimum-size / 3}px
 			color: white
 			white-space: nowrap
 
 			&:after
 				content: ''
 				position: absolute
-				top: calc(50% - #{$hit-target-minimum-size / 8 + 1}px)
-				width: #{$hit-target-minimum-size / 4}px
-				height: #{$hit-target-minimum-size / 4}px
-				border-top: 2px solid $calendar-head-foreground
-				border-right: 2px solid $calendar-head-foreground
+				top: calc(50% - #{$ciu-hit-target-minimum-size / 8 + 1}px)
+				width: #{$ciu-hit-target-minimum-size / 4}px
+				height: #{$ciu-hit-target-minimum-size / 4}px
+				border-top: 2px solid $ciu-calendar-head-foreground
+				border-right: 2px solid $ciu-calendar-head-foreground
 
 		button.prev
 			text-align: left
-			padding-left: #{$hit-target-minimum-size / 2.5}px
+			padding-left: #{$ciu-hit-target-minimum-size / 2.5}px
 			margin-right: auto
 
 			&:after
-				margin-left: $prev-next-edge-margin
+				margin-left: $ciu-prev-next-edge-margin
 				margin-right: auto
 				left: 0
 				transform: rotate(-135deg)
 
 		button.next
 			text-align: right
-			padding-right: #{$hit-target-minimum-size / 2.5}px
+			padding-right: #{$ciu-hit-target-minimum-size / 2.5}px
 			margin-left: auto
 
 			&:after
-				margin-right: $prev-next-edge-margin
+				margin-right: $ciu-prev-next-edge-margin
 				margin-left: auto
 				right: 0
 				transform: rotate(45deg)
@@ -148,22 +148,22 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			position: absolute
 			top: 50%
 			transform: translateY(-50%)
-			width: #{$segment-width}px
+			width: #{$ciu-segment-width}px
 			height: 80%
 			background: #999999
 			transition: 0.2s
 
 			&.v0
-				left: #{$hit-target-minimum-size + 15}px
+				left: #{$ciu-hit-target-minimum-size + 15}px
 				border-top-left-radius: 16px
 				border-bottom-left-radius: 16px
 
 			&.v1
-				left: #{$segment-width + $hit-target-minimum-size + 15}px
+				left: #{$ciu-segment-width + $ciu-hit-target-minimum-size + 15}px
 				border-radius: 0
 
 			&.v2
-				left: #{2 * $segment-width + $hit-target-minimum-size + 15}px
+				left: #{2 * $ciu-segment-width + $ciu-hit-target-minimum-size + 15}px
 				border-top-right-radius: 16px
 				border-bottom-right-radius: 16px
 				
@@ -171,7 +171,7 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			position: absolute
 			left: 50%
 			top: 50%
-			width: #{3 * $segment-width}px
+			width: #{3 * $ciu-segment-width}px
 			height: 80%
 			transform: translate(-50%, -50%)
 			border: 1px solid #999999
@@ -180,9 +180,9 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 
 		.segment
 			position: relative
-			width: #{$segment-width}px
+			width: #{$ciu-segment-width}px
 			color: white
-			font-size: #{$hit-target-minimum-size/2.25}px
+			font-size: #{$ciu-hit-target-minimum-size/2.25}px
 			
 	.sled
 		position: relative
@@ -203,7 +203,7 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 		border-radius: 4px
 		position: relative
 		overflow: hidden
-		width: #{$datepicker-width}px
+		width: #{$ciu-datepicker-width}px
 		z-index: 0
 
 	.weekdays, .months
@@ -212,10 +212,10 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 
 	.day, .month, .year
 		position: relative
-		font-size: $calendar-body-font-size
-		background: $calendar-body-background
+		font-size: $ciu-calendar-body-font-size
+		background: $ciu-calendar-body-background
 		border: 0
-		color: $calendar-body-foreground
+		color: $ciu-calendar-body-foreground
 		cursor: pointer
 		z-index: 0
 
@@ -223,11 +223,11 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			z-index: 1
 
 		&:hover
-			background: darken($calendar-body-background, 10)
+			background: darken($ciu-calendar-body-background, 10)
 
 		&.dummy
-			background: $calendar-head-background
-			color: $calendar-head-foreground
+			background: $ciu-calendar-head-background
+			color: $ciu-calendar-head-foreground
 			border: 0
 			cursor: default
 			display: flex
@@ -235,28 +235,28 @@ $calendar-body-font-size: #{$hit-target-minimum-size / 2.5}px
 			align-items: center
 
 			&:hover
-				background: $calendar-head-background
+				background: $ciu-calendar-head-background
 
 		.number
 			position: relative
 			z-index: 1
 
 		&.chosen
-			background: $chosen-day-fill
-			border: 2px solid $calendar-head-background
+			background: $ciu-chosen-day-fill
+			border: 2px solid $ciu-calendar-head-background
 			font-weight: 700
 
 	.day
-		width: #{$hit-target-minimum-size}px
-		height: #{$hit-target-minimum-size}px
+		width: #{$ciu-hit-target-minimum-size}px
+		height: #{$ciu-hit-target-minimum-size}px
 
 	.month
 		width: 25%
-		height: #{$datepicker-width / 4}px
+		height: #{$ciu-datepicker-width / 4}px
 
 	.year
 		width: 20%
-		height: #{$datepicker-width / 5}px
+		height: #{$ciu-datepicker-width / 5}px
 
 	.other-scope
-		color: $other-months-foreground 
+		color: $ciu-other-months-foreground 
