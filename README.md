@@ -37,7 +37,7 @@ starting day.
 
 | attribute            | type     | description                                     |
 | :------------------- | :------: | :---------------------------------------------: |
-| ```weekstart```      | Int      | 0-based weekday to present first, defaulting to 0 (Sunday)
+| ```weekStart```      | Int      | 0-based weekday to present first, defaulting to 0 (Sunday)
 | ```prevNextTitles``` | [String] | Array of string labels for the prev/next increment buttons. Defaults to  ```["1 Mo", "1 Yr", "10 Yr"]```
 | ```locale```         | String   | BCP 47 language tag, eg. ```"fr"``` or ```"es"```. Defaults to ```"en-us"```
 | ```locOptions```     | Object   | hash for the  components of the formatted date for output to the display. The tested options are ```weekDay```, ```day```, ```month```, ```year```. [See the MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) for the possible values.

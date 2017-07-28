@@ -328,9 +328,9 @@
 				view: 0
 			}
 
-			var localeData = vnode.attrs.localeData
+			var locOptions = vnode.attrs.locOptions
 			;['prevNextTitles', 'weekStart', 'locale', 'locOptions'].forEach(function (prop) {
-				props[prop] = localeData && localeData[prop] ? localeData[prop] : eval(prop)
+				props[prop] = locOptions && locOptions[prop] ? locOptions[prop] : eval(prop)
 			})
 
 			var strings = stringsForLocale(props.locale)
