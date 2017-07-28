@@ -312,7 +312,7 @@
 		localize: function (loc) {
 			if (loc) {
 				prevNextTitles = loc.prevNextTitles || prevNextTitles
-				weekStart = loc.weekStart || weekStart
+				weekStart = loc.weekStart !== 'undefined' ? loc.weekStart : weekStart
 				locale = loc.locale || locale
 				locOptions = loc.locOptions || locOptions
 				
@@ -329,7 +329,8 @@
 			}
 
 			var locOptions = vnode.attrs.locOptions
-			;['prevNextTitles', 'weekStart', 'locale', 'locOptions'].forEach(function (prop) {
+			props.weekStart = (locOptions && locOptions.weekStart !== 'undefined') ? locOptions.weekStart : weekStart 
+			;['prevNextTitles', 'locale', 'locOptions'].forEach(function (prop) {
 				props[prop] = locOptions && locOptions[prop] ? locOptions[prop] : eval(prop)
 			})
 
