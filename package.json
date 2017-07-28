@@ -1,7 +1,7 @@
 {
   "name": "mithril-datepicker",
   "repository": "https://github.com/CreaturesInUnitards/mithril-datepicker",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "mithril/flexbox datepicker",
   "main": "mithril-datepicker.js",
   "scripts": {
