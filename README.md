@@ -6,7 +6,6 @@ Pick a date! But only if you're using Mithril, and only for flexbox-capable brow
 
 
 ## Usage
-Works with Node.js modules, or as a standalone ES5 script. Either ```require``` it, or simply include a ```script``` tag sometime after including ```mithril```. then just use it as a component:
 
 ```js
 var DatePicker = require('path/to/mithril-datepicker.js')
@@ -15,15 +14,14 @@ var myDate = new Date(someSpecialDateYouHaveInMind)
 m(DatePicker, {
   date: myDate,
   onchange: function(chosenDate){
-    // chosenDate is the date that got chosen. Or 'picked', if you will.
-    // this is where we do what we need to do with it.
+    // do your magic with your shiny new Date
   }
 })
 ```
 
 ## API
 There are 2 optional attributes you can pass in via the component's ```attrs``` object:
-- ```date```:      any valid JS ```Date``` object. Defaults to the current date.
+- ```date```:      a valid JS ```Date``` object. Defaults to the current date.
 - ```onchange```:    function to execute when a date is chosen. Receives the newly-chosen ```Date``` object as its argument.
 
 ## Theming
@@ -37,35 +35,41 @@ whichever fits your workflow. If you're using SASS, you have a lot of quick-chan
 for days of the week, months and the labels for the previous/next buttons can all be overridden, along with the week's 
 starting day.
 
-- ```weekStart```: 0-6, defaulting to 0 (Sunday)
-- ```days```: array of strings for the names of the days of the week, beginning with Sunday. Defaults to English.
-- ```months```: array of strings for the names of the months, beginning with January. Defaults to English.
-- ```prevNextTitles```: array of strings for incrementing the view by 1 month, 1 year and 10 years. Defaults to ```['1 Mo', '1 Yr', '10 Yr']```
+| attribute            | type     | description                                     |
+| :------------------- | :------: | :---------------------------------------------: |
+| ```weekstart```      | Int      | 0-based weekday to present first, defaulting to 0 (Sunday)
+| ```prevNextTitles``` | [String] | Array of string labels for the prev/next increment buttons. Defaults to  ```["1 Mo", "1 Yr", "10 Yr"]```
+| ```locale```         | String   | BCP 47 language tag, eg. ```"fr"``` or ```"es"```. Defaults to ```"en-us"```
+| ```locOptions```     | Object   | hash for the  components of the formatted date for output to the display. The tested options are ```weekDay```, ```day```, ```month```, ```year```. [See the MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) for the possible values.
+
 
 
 To globally set the language for all datepickers in your project:
 
 ```js
+var myOptions = {
+	weekday: 'narrow',
+	day: '2-digit',
+	month: 'short',
+	year: 'numeric'
+}
+
 DatePicker.localize({
-  weekStart: 1, // 
-  days: ['Domingo', 'Lunes', 'Martes'...],
-  months: ['Enero', 'Febrero', 'Marzo'...],
-  prevNextTitles: ['1 Me', '1 Añ', '10 Añ']
+  weekStart: 1, // Monday 
+  locale: 'es',
+  prevNextTitles: ['1 Me', '1 Añ', '10 Añ'],
+  locOptions: myOptions
 })
 ```
 
-To set the language for a single datepicker, overriding the default/global setting, pass a ```localeData``` object to
-the component's ```attrs```:
-
+To set the language for a single datepicker, overriding the default/global setting, pass ```attrs``` to the component:  
 ```js
 m(DatePicker, {
   date: myDate,
   onchange: myOnchangeFn,
-  localeData: {
-    days: ['Domingo', 'Lunes', 'Martes'...],
-    months: ['Enero', 'Febrero'...],
-    prevNextTitles: ['1 Me', '1 Añ', '10 Añ']
-  } 
+  weekStart: 0, // override the global we set above
+  locale: 'fr',
+  locOptions: myOptions 
 })
 ```
 
