@@ -35,12 +35,12 @@ whichever fits your workflow. If you're using SASS, you have a lot of quick-chan
 for days of the week, months and the labels for the previous/next buttons can all be overridden, along with the week's 
 starting day.
 
-| attribute            | type     | description                                     |
-| :------------------- | :------: | :---------------------------------------------: |
-| ```weekStart```      | Int      | 0-based weekday to present first, defaulting to 0 (Sunday)
-| ```prevNextTitles``` | [String] | Array of string labels for the prev/next increment buttons. Defaults to  ```["1 Mo", "1 Yr", "10 Yr"]```
-| ```locale```         | String   | BCP 47 language tag, eg. ```"fr"``` or ```"es"```. Defaults to ```"en-us"```
-| ```locOptions```     | Object   | hash for the  components of the formatted date for output to the display. The tested options are ```weekDay```, ```day```, ```month```, ```year```. [See the MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) for the possible values.
+| ATTRIBUTE            | TYPE     | DESCRIPTION              |
+| :------------------- | :------  | :----------------------- |
+| ```locale```         | String   | BCP 47 language tag, eg. ```"fr"``` or ```"es"```. Defaults to ```"en-us"``` |
+| ```weekStart```      | Int      | 0-based weekday to present first, defaulting to 0 (Sunday) |
+| ```prevNextTitles``` | [String] | Array of string labels for the prev/next increment buttons. Defaults to  ```["1 Mo", "1 Yr", "10 Yr"]``` |
+| ```formatOptions```  | Object   | hash for the  components of the formatted date for output to the display. The tested options are ```weekDay```, ```day```, ```month```, ```year```. [See the MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) for the possible values. |
 
 
 
@@ -48,7 +48,7 @@ To globally set the language for all datepickers in your project:
 
 ```js
 var myOptions = {
-	weekday: 'narrow',
+	weekday: 'short',
 	day: '2-digit',
 	month: 'short',
 	year: 'numeric'
@@ -58,7 +58,7 @@ DatePicker.localize({
   weekStart: 1, // Monday 
   locale: 'es',
   prevNextTitles: ['1 Me', '1 Añ', '10 Añ'],
-  locOptions: myOptions
+  formatOptions: myOptions
 })
 ```
 
@@ -69,7 +69,6 @@ m(DatePicker, {
   onchange: myOnchangeFn,
   weekStart: 0, // override the global we set above
   locale: 'fr',
-  locOptions: myOptions 
+  formatOptions: myOptions 
 })
 ```
-

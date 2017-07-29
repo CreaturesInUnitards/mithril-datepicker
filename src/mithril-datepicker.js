@@ -3,14 +3,14 @@
 		? (global.m || require('mithril'))
 		: window.m
 
-	if (!m) throw ("Can't find Mithril.js")
+	if (!m) throw ("mithril-datepicker can't find Mithril.js")
 	
 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 	var prevNextTitles = ['1 Mo', '1 Yr', '10 Yr']
 	var weekStart = 0
 	var locale = 'en-us'
-	var locOptions = null
+	var formatOptions = null
 
 	/***************************************
 	 *
@@ -163,7 +163,7 @@
 
 	function displayDate(props) {
 		return props.date
-			.toLocaleDateString(props.locale, props.locOptions || {
+			.toLocaleDateString(props.locale, props.formatOptions || {
 				weekday: 'short',
 				month: 'short',
 				day: 'numeric',
@@ -181,6 +181,7 @@
 		view: function (vnode) {
 			var props = vnode.attrs.props
 			var date = props.date
+			var theseMonths = props.months || months
 			return m('.header'
 				, m('.button-bg', { class: 'v' + props.view })
 				, m('.fake-border')
@@ -189,7 +190,7 @@
 					, prevNextTitles[props.view]
 				)
 				, m('button.segment', { onclick: function () { props.view = 0 } }, date.getDate())
-				, m('button.segment', { onclick: function () { props.view = 1 } }, props.months[date.getMonth()].substr(0, 3))
+				, m('button.segment', { onclick: function () { props.view = 1 } }, theseMonths[date.getMonth()].substr(0, 3))
 				, m('button.segment', { onclick: function () { props.view = 2 } }, date.getFullYear())
 				, m('button.next'
 					, { onclick: prevNext.bind(null, props, 1) }
@@ -202,13 +203,14 @@
 	var MonthView = {
 		view: function (vnode) {
 			var props = vnode.attrs.props
-			var prevDays = daysFromLastMonth(props)
-			var theseDays = daysFromThisMonth(props)
-			var nextDays = daysFromNextMonth(prevDays, theseDays)
+			var prevDates = daysFromLastMonth(props)
+			var theseDates = daysFromThisMonth(props)
+			var nextDates = daysFromNextMonth(prevDates, theseDates)
+			var theseWeekdays = props.days || days
 			return m('.calendar'
 				, m('.weekdays'
-					, props.days.map(function (_, idx) {
-						var day = wrapAround(idx + props.weekStart, props.days)
+					, theseWeekdays.map(function (_, idx) {
+						var day = wrapAround(idx + props.weekStart, theseWeekdays)
 						return m('.day.dummy', day.substring(0, 2))
 					})
 				)
@@ -219,16 +221,16 @@
 							dismissAndCommit(props, vnode.attrs.onchange)
 						}
 					}
-					, prevDays.map(function (date) {
+					, prevDates.map(function (date) {
 						return m('button.day.other-scope', date)
 					})
-					, theseDays.map(function (date) {
+					, theseDates.map(function (date) {
 						return m('button.day'
 							, { class: classForBox(props.date.getDate(), date) }
 							, m('.number', date)
 						)
 					})
-					, nextDays.map(function (date) {
+					, nextDates.map(function (date) {
 						return m('button.day.other-scope', date)
 					})
 				)
@@ -240,9 +242,10 @@
 	var YearView = {
 		view: function (vnode) {
 			var props = vnode.attrs.props
+			var theseMonths = props.months || months
 			return m('.calendar'
 				, m('.months'
-					, props.months.map(function (month, idx) {
+					, theseMonths.map(function (month, idx) {
 						return m('button.month'
 							, {
 								class: classForBox(props.date.getMonth(), idx),
@@ -312,31 +315,35 @@
 		localize: function (loc) {
 			if (loc) {
 				prevNextTitles = loc.prevNextTitles || prevNextTitles
-				weekStart = loc.weekStart !== 'undefined' ? loc.weekStart : weekStart
 				locale = loc.locale || locale
-				locOptions = loc.locOptions || locOptions
+				formatOptions = loc.formatOptions || formatOptions
+				weekStart = typeof loc.weekStart === 'number'
+					? loc.weekStart
+					: weekStart
 				
-				var obj = stringsForLocale(locale)
-				days = obj.days
-				months = obj.months
+				var strings = stringsForLocale(locale)
+				days = strings.days
+				months = strings.months
 			}
 		},
 		oninit: function (vnode) {
+			var attrs = vnode.attrs
 			var props = {
-				date: new Date(vnode.attrs.date || defaultDate()),
+				date: new Date(attrs.date || defaultDate()),
 				active: false,
 				view: 0
 			}
-
-			var locOptions = vnode.attrs.locOptions
-			props.weekStart = (locOptions && locOptions.weekStart !== 'undefined') ? locOptions.weekStart : weekStart 
-			;['prevNextTitles', 'locale', 'locOptions'].forEach(function (prop) {
-				props[prop] = locOptions && locOptions[prop] ? locOptions[prop] : eval(prop)
+				
+			;['prevNextTitles', 'locale', 'formatOptions'].forEach(function (prop) {
+				props[prop] = attrs[prop] || eval(prop)
 			})
+			props.weekStart = typeof attrs.weekStart === 'number' ? attrs.weekStart : weekStart
 
-			var strings = stringsForLocale(props.locale)
-			props.days = strings.days
-			props.months = strings.months
+			if (attrs.locale && attrs.locale !== locale) {
+				var strings = stringsForLocale(props.locale)
+				props.days = strings.days
+				props.months = strings.months
+			}
 
 			vnode.state.props = props
 		},
@@ -364,5 +371,5 @@
 	
 	if (typeof module === 'object') module.exports = DatePicker
 	else if (typeof window !== 'undefined') window.DatePicker = DatePicker
-	else global.DatePicker = DatePicker	
+	else global.DatePicker = DatePicker
 })()
