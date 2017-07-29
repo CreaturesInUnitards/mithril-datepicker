@@ -31,5 +31,9 @@
   },
   "dependencies": {
     "mithril": "^1.0.1"
-  }
+  },
+  "files": [
+    "src/",
+    "mithril-datepicker.js"
+  ]
 }
