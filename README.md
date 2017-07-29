@@ -4,7 +4,12 @@ Pick a date! But only if you're using Mithril, and only for flexbox-capable brow
 ## Demo
 [mithril-datepicker at flems.io](http://bit.ly/2v6wmAE)
 
+## Installation
 
+via npm:
+
+```npm install mithril-datepicker```
+  
 ## Usage
 
 ```js
