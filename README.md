@@ -9,6 +9,8 @@ Pick a date! But only if you're using Mithril, and only for flexbox-capable brow
 via npm:
 
 ```npm install mithril-datepicker```
+
+You'll want to bring in either ```src/style.sass``` or ```src/style.css```, depending on your workflow. 
   
 ## Usage
 
