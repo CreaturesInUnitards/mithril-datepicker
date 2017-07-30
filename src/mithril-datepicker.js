@@ -358,6 +358,7 @@
 							onclick: function(){
 								if (props.active) props.view = 0
 								props.active = !props.active
+								vnode.attrs.onactivate && vnode.attrs.onactivate(vnode)
 							}
 						}
 						, displayText
