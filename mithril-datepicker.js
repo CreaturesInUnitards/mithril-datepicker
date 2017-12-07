@@ -333,10 +333,10 @@
 				active: false,
 				view: 0
 			}
-				
-			;['prevNextTitles', 'locale', 'formatOptions'].forEach(function (prop) {
-				props[prop] = attrs[prop] || eval(prop)
-			})
+
+			props.prevNextTitles = attrs.prevNextTitles || prevNextTitles
+			props.locale = attrs.locale || locale
+			props.formatOptions = attrs.formatOptions || formatOptions
 			props.weekStart = typeof attrs.weekStart === 'number' ? attrs.weekStart : weekStart
 
 			if (attrs.locale && attrs.locale !== locale) {
