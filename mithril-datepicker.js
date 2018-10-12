@@ -83,14 +83,20 @@
 		return newDate
 	}
 
+  // Removes extra LTR and RTL characters added by toLocaleDateString function in IE11
+	// https://stackoverflow.com/questions/36225603/internet-explorer-returning-wrong-length-of-string
+	function sanitizeLocaleDateString(str) {
+		return str.replace(/[^ -~]/g, '')
+	}
+
 	function stringsForLocale(locale) {
 		var date = new Date('jan 1 2017'), _months = [], _days = [] // 1/1/2017 was month:0 and weekday:0, so perfect
 		while (_days.length < 7) {
-			_days.push(date.toLocaleDateString(locale, { weekday: 'long' }).replace(/[^ -~]/g, ''))
+			_days.push(sanitizeLocaleDateString(date.toLocaleDateString(locale, { weekday: 'long' })))
 			date.setDate(date.getDate() + 1)
 		}
 		while (_months.length < 12) {
-			_months.push(date.toLocaleDateString(locale, { month: 'long' }).replace(/[^ -~]/g, ''))
+			_months.push(sanitizeLocaleDateString(date.toLocaleDateString(locale, { month: 'long' })))
 			date.setMonth(date.getMonth() + 1)
 		}
 		return { days: _days, months: _months }
@@ -162,13 +168,13 @@
 	function classForBox(a, b) { return a === b ? 'chosen' : '' }
 
 	function displayDate(props) {
-		return props.date
+		return sanitizeLocaleDateString(props.date
 			.toLocaleDateString(props.locale, props.formatOptions || {
 				weekday: 'short',
 				month: 'short',
 				day: 'numeric',
 				year: 'numeric'
-			})
+			}))
 	}
 
 	/***************************************
