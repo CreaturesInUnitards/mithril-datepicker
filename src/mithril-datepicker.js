@@ -186,14 +186,29 @@
 				, m('.button-bg', { class: 'v' + props.view })
 				, m('.fake-border')
 				, m('button.prev'
-					, { onclick: prevNext.bind(null, props, -1) }
+					, {
+						onclick: prevNext.bind(null, props, -1),
+						type: 'button'
+					}
 					, prevNextTitles[props.view]
 				)
-				, m('button.segment', { onclick: function () { props.view = 0 } }, date.getDate())
-				, m('button.segment', { onclick: function () { props.view = 1 } }, theseMonths[date.getMonth()].substr(0, 3))
-				, m('button.segment', { onclick: function () { props.view = 2 } }, date.getFullYear())
+				, m('button.segment', {
+						onclick: function () { props.view = 0 },
+          	type: 'button'
+					}, date.getDate())
+				, m('button.segment', {
+						onclick: function () { props.view = 1 },
+          	type: 'button'
+					}, theseMonths[date.getMonth()].substr(0, 3))
+				, m('button.segment', {
+						onclick: function () { props.view = 2 },
+          	type: 'button'
+					}, date.getFullYear())
 				, m('button.next'
-					, { onclick: prevNext.bind(null, props, 1) }
+					, {
+						onclick: prevNext.bind(null, props, 1),
+            type: 'button'
+					}
 					, prevNextTitles[props.view]
 				)
 			)
@@ -222,16 +237,23 @@
 						}
 					}
 					, prevDates.map(function (date) {
-						return m('button.day.other-scope', date)
+						return m('button.day.other-scope', {
+              type: 'button'
+						}, date)
 					})
 					, theseDates.map(function (date) {
 						return m('button.day'
-							, { class: classForBox(props.date.getDate(), date) }
+							, {
+								class: classForBox(props.date.getDate(), date),
+                type: 'button'
+							}
 							, m('.number', date)
 						)
 					})
 					, nextDates.map(function (date) {
-						return m('button.day.other-scope', date)
+						return m('button.day.other-scope', {
+              type: 'button'
+            }, date)
 					})
 				)
 			)
@@ -254,7 +276,8 @@
 									newDate.setMonth(idx)
 									props.date = pushToLastDay(props.date, newDate)
 									props.view = 0
-								}
+								},
+								type: 'button'
 							}
 							, m('.number', month.substring(0, 3))
 						)
@@ -279,7 +302,8 @@
 									newDate.setFullYear(year)
 									props.date = pushToLastDay(props.date, newDate)
 									props.view = 1
-								}
+								},
+								type: 'button'
 							}
 							, m('.number', year)
 						)
@@ -333,10 +357,10 @@
 				active: false,
 				view: 0
 			}
-				
-			;['prevNextTitles', 'locale', 'formatOptions'].forEach(function (prop) {
-				props[prop] = attrs[prop] || eval(prop)
-			})
+
+			props.prevNextTitles = attrs.prevNextTitles || prevNextTitles
+			props.locale = attrs.locale || locale
+			props.formatOptions = attrs.formatOptions || formatOptions
 			props.weekStart = typeof attrs.weekStart === 'number' ? attrs.weekStart : weekStart
 
 			if (attrs.locale && attrs.locale !== locale) {
@@ -358,7 +382,6 @@
 							onclick: function(){
 								if (props.active) props.view = 0
 								props.active = !props.active
-								vnode.attrs.onactivate && vnode.attrs.onactivate(vnode)
 							}
 						}
 						, displayText
