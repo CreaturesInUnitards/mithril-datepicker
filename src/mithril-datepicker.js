@@ -86,11 +86,11 @@
 	function stringsForLocale(locale) {
 		var date = new Date('jan 1 2017'), _months = [], _days = [] // 1/1/2017 was month:0 and weekday:0, so perfect
 		while (_days.length < 7) {
-			_days.push(date.toLocaleDateString(locale, { weekday: 'long' }))
+			_days.push(date.toLocaleDateString(locale, { weekday: 'long' }).replace(/[^ -~]/g, ''))
 			date.setDate(date.getDate() + 1)
 		}
 		while (_months.length < 12) {
-			_months.push(date.toLocaleDateString(locale, { month: 'long' }))
+			_months.push(date.toLocaleDateString(locale, { month: 'long' }).replace(/[^ -~]/g, ''))
 			date.setMonth(date.getMonth() + 1)
 		}
 		return { days: _days, months: _months }
